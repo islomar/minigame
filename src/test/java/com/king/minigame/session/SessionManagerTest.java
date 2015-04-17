@@ -1,4 +1,4 @@
-package com.king.minigame;
+package com.king.minigame.session;
 
 
 import org.mockito.InjectMocks;
@@ -28,23 +28,25 @@ public class SessionManagerTest {
   @Mock
   private Clock clockMock;
 
-  @InjectMocks            // do I really need it?
+  @InjectMocks
   private SessionManager sessionManager;
 
   @BeforeClass
   public void setUpBeforeClass() {
+
     sessionManager = new SessionManager(clockMock);
-    initMocks(this);    // do I really need it?
+    initMocks(this);
   }
 
   @BeforeMethod
   public void setUpBeforeMethod() {
-      sessionManager.removeAllSessions();
+
+    sessionManager.removeAllSessions();
   }
 
   public void should_return_valid_session_key_for_a_user_who_just_logged_in() {
 
-    when(clockMock.instant()).thenReturn(Instant.now());
+    setTimeToNow();
     String sessionKey = sessionManager.login(USER_ID);
 
     assertThat(sessionKey, is(notNullValue()));
@@ -53,7 +55,7 @@ public class SessionManagerTest {
 
   public void a_user_who_has_not_logged_in_should_not_be_considered_active() {
 
-    when(clockMock.instant()).thenReturn(Instant.now());
+    setTimeToNow();
     String sessionKey = sessionManager.login(USER_ID);
     boolean isUserActive = sessionManager.isUserActive(ANOTHER_USER_ID);
 
@@ -63,27 +65,36 @@ public class SessionManagerTest {
 
   public void a_user_who_logged_in_9_minutes_ago_should_be_considered_an_active_user() {
 
-    Instant tenMinutesAgo = Instant.now().minus(9, ChronoUnit.MINUTES);
-    when(clockMock.instant()).thenReturn(tenMinutesAgo);
+    setTimeMinutesAgo(9);
     String sessionKey = sessionManager.login(USER_ID);
 
-    when(clockMock.instant()).thenReturn(Instant.now());
+    setTimeToNow();
     boolean isUserActive = sessionManager.isUserActive(USER_ID);
 
     assertTrue(isUserActive);
   }
 
-
   public void a_user_who_logged_in_more_than_10_minutes_ago_should_not_be_considered_active() {
 
-    Instant twelveMinutesAgo = Instant.now().minus(11, ChronoUnit.MINUTES);
-    when(clockMock.instant()).thenReturn(twelveMinutesAgo);
+    setTimeMinutesAgo(11);
 
     String sessionKey = sessionManager.login(USER_ID);
 
-    when(clockMock.instant()).thenReturn(Instant.now());
+    setTimeToNow();
     boolean isUserActive = sessionManager.isUserActive(USER_ID);
 
     assertFalse(isUserActive);
+  }
+
+
+  private void setTimeToNow() {
+    when(clockMock.instant()).thenReturn(Instant.now());
+  }
+
+
+  private void setTimeMinutesAgo(int minutesAgo) {
+
+    Instant instantAgo = Instant.now().minus(minutesAgo, ChronoUnit.MINUTES);
+    when(clockMock.instant()).thenReturn(instantAgo);
   }
 }

@@ -6,6 +6,7 @@ Time zone is ignored.
 Maybe use Instant (immutable and thread-safe). isAfter, isBefore
 https://docs.oracle.com/javase/tutorial/datetime/iso/instant.html
 
+Instant is immutable and thread-safe
 SessionCookie is immutable (or I hope so :-) ).
 
 
@@ -18,5 +19,16 @@ In Java, int are always signed.
 
 2^1 - 1 = 2147483648
 
+Java 8 optional without Consumer (ifPresent), I just wanted to avoid nulls and it is more readable.
 
+
+Cookie-less session: session Id is embedded in the URL
 Test naming convention: http://www.petrikainulainen.net/programming/testing/writing-clean-tests-trouble-in-paradise
+
+                          https://www.owasp.org/index.php/Session_fixation
+http://en.wikipedia.org/wiki/Session_fixation
+
+
+
+PENDIENTE
+* Concurrencia en SessionCookieRepository, ConcurrencyMap???

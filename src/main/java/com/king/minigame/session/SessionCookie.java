@@ -1,16 +1,15 @@
-package com.king.minigame;
+package com.king.minigame.session;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**
- *  Immutable class to store xxxx.
- *  TODO: sobrescribir equals y hashCode para poder comparar... ¿solo por sessionKey?
+ *  Immutable class to store session cookies.
  */
 public final class SessionCookie {
 
   private final String sessionKey;
-  private final Instant creationInstant;
+  private Instant creationInstant;
 
   public SessionCookie(final String sessionKey, final Instant creationInstant) {
     this.sessionKey = sessionKey;
@@ -22,9 +21,8 @@ public final class SessionCookie {
     return sessionKey;
   }
 
-  //TODO: return a copy???
   public Instant getCreationInstant() {
 
-    return Instant.from(creationInstant);
+    return creationInstant;
   }
 }
