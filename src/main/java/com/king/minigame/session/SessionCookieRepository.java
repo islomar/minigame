@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- *
+ *  Class responsible for storing, finding and removing SessionCookies.
  */
 public class SessionCookieRepository {
 

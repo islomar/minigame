@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Class responsible for xxxx.
+ * Class responsible for login users and querying if a user session is still active.
  */
 public class SessionManager {
 
@@ -24,15 +24,15 @@ public class SessionManager {
 
   public String login(Integer userId) {
 
-      Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.getSessionCookie(userId);
+    Optional<String> activeSessionKeyForUser = getActiveSessionKeyForUser(userId);
 
-      if (sessionCookie.isPresent()) {
-        return sessionCookie.get().getSessionKey();
-      } else {
-        SessionCookie newSessionCookie = createSessionCookie();
-        saveSessionCookie(userId, newSessionCookie);
-        return newSessionCookie.getSessionKey();
-      }
+    if (activeSessionKeyForUser.isPresent()) {
+      return activeSessionKeyForUser.get();
+    } else {
+      SessionCookie newSessionCookie = createSessionCookie();
+      saveSessionCookie(userId, newSessionCookie);
+      return newSessionCookie.getSessionKey();
+    }
   }
 
 
@@ -66,20 +66,21 @@ public class SessionManager {
   }
 
 
+  private Optional<String> getActiveSessionKeyForUser(Integer userId) {
+
+    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.getSessionCookie(userId);
+    if (sessionCookie.isPresent() && isSessionCookieStillActive(sessionCookie.get())) {
+      return Optional.of(sessionCookie.get().getSessionKey());
+    } else {
+      return Optional.empty();
+    }
+  }
+
+
   private boolean isSessionCookieStillActive(SessionCookie sessionCookie) {
 
     Instant sessionTimeout = Instant.now().minus(SESSION_TIMEOUT_IN_MINUTES, ChronoUnit.MINUTES);
     return sessionCookie.getCreationInstant().isAfter(sessionTimeout);
   }
 
-
-  private boolean isUserSessionStillActive(Integer userId) {
-
-    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.getSessionCookie(userId);
-    if (sessionCookie.isPresent()) {
-      return isSessionCookieStillActive(sessionCookie.get());
-    } else {
-      return false;
-    }
-  }
 }

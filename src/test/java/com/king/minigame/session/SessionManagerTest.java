@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -50,6 +51,29 @@ public class SessionManagerTest {
     String sessionKey = sessionManager.login(USER_ID);
 
     assertThat(sessionKey, is(notNullValue()));
+  }
+
+
+  public void a_user_who_logs_in_twice_in_9_minutes_should_get_the_same_session_key() {
+
+    setTimeMinutesAgo(9);
+    String oldSessionKey = sessionManager.login(USER_ID);
+
+    setTimeToNow();
+    String newSessionKey = sessionManager.login(USER_ID);
+
+    assertThat(oldSessionKey, is(newSessionKey));
+  }
+
+  public void a_user_who_logs_in_twice_in_more_than_10_minutes_should_get_a_different_session_key() {
+
+    setTimeMinutesAgo(11);
+    String oldSessionKey = sessionManager.login(USER_ID);
+
+    setTimeToNow();
+    String newSessionKey = sessionManager.login(USER_ID);
+
+    assertThat(oldSessionKey, is(not(newSessionKey)));
   }
 
 

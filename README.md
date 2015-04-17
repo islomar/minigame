@@ -29,6 +29,7 @@ Test naming convention: http://www.petrikainulainen.net/programming/testing/writ
 http://en.wikipedia.org/wiki/Session_fixation
 
 
+CQRS: basic separate command and query.
 
 PENDIENTE
 * Concurrencia en SessionCookieRepository, ConcurrencyMap???

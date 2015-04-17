@@ -1,8 +1,10 @@
 package com.king.minigame.session;
 
+import org.testng.annotations.ExpectedExceptions;
 import org.testng.annotations.Test;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,5 +44,25 @@ public class SessionCookieTest {
     assertThat(sessionCookie.getSessionKey(), is(sessionKey));
     assertThat(sessionCookie.getCreationInstant(), is(creationInstant));
   }
+
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void throw_IllegalArgumentException_if_session_key_is_null() {
+    new SessionCookie(null, Instant.now());
+  }
+
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void throw_IllegalArgumentException_if_instant_is_null() {
+    new SessionCookie("anySessionKey", null);
+  }
+
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void throw_IllegalArgumentException_if_instant_is_in_the_future() {
+    new SessionCookie("anySessionKey", Instant.now().plus(1, ChronoUnit.MINUTES));
+  }
+
+
 
 }
