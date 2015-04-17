@@ -9,14 +9,14 @@ import java.util.UUID;
 /**
  * Class responsible for login users and querying if a user session is still active.
  */
-public class SessionManager {
+public class SessionService {
 
   private final static int SESSION_TIMEOUT_IN_MINUTES = 10;
   private SessionCookieRepository sessionCookieRepository;
 
   private Clock clock;
 
-  public SessionManager(final Clock clock) {
+  public SessionService(final Clock clock) {
 
     sessionCookieRepository = new SessionCookieRepository();
     this.clock = clock;

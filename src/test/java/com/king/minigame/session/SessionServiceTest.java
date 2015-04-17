@@ -21,7 +21,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 @Test
-public class SessionManagerTest {
+public class SessionServiceTest {
 
   private static final Integer USER_ID = 123456789;
   private static final Integer ANOTHER_USER_ID = 1;
@@ -30,25 +30,25 @@ public class SessionManagerTest {
   private Clock clockMock;
 
   @InjectMocks
-  private SessionManager sessionManager;
+  private SessionService sessionService;
 
   @BeforeClass
   public void setUpBeforeClass() {
 
-    sessionManager = new SessionManager(clockMock);
+    sessionService = new SessionService(clockMock);
     initMocks(this);
   }
 
   @BeforeMethod
   public void setUpBeforeMethod() {
 
-    sessionManager.removeAllSessions();
+    sessionService.removeAllSessions();
   }
 
   public void should_return_valid_session_key_for_a_user_who_just_logged_in() {
 
     setTimeToNow();
-    String sessionKey = sessionManager.login(USER_ID);
+    String sessionKey = sessionService.login(USER_ID);
 
     assertThat(sessionKey, is(notNullValue()));
   }
@@ -57,10 +57,10 @@ public class SessionManagerTest {
   public void a_user_who_logs_in_twice_in_9_minutes_should_get_the_same_session_key() {
 
     setTimeMinutesAgo(9);
-    String oldSessionKey = sessionManager.login(USER_ID);
+    String oldSessionKey = sessionService.login(USER_ID);
 
     setTimeToNow();
-    String newSessionKey = sessionManager.login(USER_ID);
+    String newSessionKey = sessionService.login(USER_ID);
 
     assertThat(oldSessionKey, is(newSessionKey));
   }
@@ -68,10 +68,10 @@ public class SessionManagerTest {
   public void a_user_who_logs_in_twice_in_more_than_10_minutes_should_get_a_different_session_key() {
 
     setTimeMinutesAgo(11);
-    String oldSessionKey = sessionManager.login(USER_ID);
+    String oldSessionKey = sessionService.login(USER_ID);
 
     setTimeToNow();
-    String newSessionKey = sessionManager.login(USER_ID);
+    String newSessionKey = sessionService.login(USER_ID);
 
     assertThat(oldSessionKey, is(not(newSessionKey)));
   }
@@ -80,8 +80,8 @@ public class SessionManagerTest {
   public void a_user_who_has_not_logged_in_should_not_be_considered_active() {
 
     setTimeToNow();
-    String sessionKey = sessionManager.login(USER_ID);
-    boolean isUserActive = sessionManager.isUserActive(ANOTHER_USER_ID);
+    String sessionKey = sessionService.login(USER_ID);
+    boolean isUserActive = sessionService.isUserActive(ANOTHER_USER_ID);
 
     assertFalse(isUserActive);
   }
@@ -90,10 +90,10 @@ public class SessionManagerTest {
   public void a_user_who_logged_in_9_minutes_ago_should_be_considered_an_active_user() {
 
     setTimeMinutesAgo(9);
-    String sessionKey = sessionManager.login(USER_ID);
+    String sessionKey = sessionService.login(USER_ID);
 
     setTimeToNow();
-    boolean isUserActive = sessionManager.isUserActive(USER_ID);
+    boolean isUserActive = sessionService.isUserActive(USER_ID);
 
     assertTrue(isUserActive);
   }
@@ -102,10 +102,10 @@ public class SessionManagerTest {
 
     setTimeMinutesAgo(11);
 
-    String sessionKey = sessionManager.login(USER_ID);
+    String sessionKey = sessionService.login(USER_ID);
 
     setTimeToNow();
-    boolean isUserActive = sessionManager.isUserActive(USER_ID);
+    boolean isUserActive = sessionService.isUserActive(USER_ID);
 
     assertFalse(isUserActive);
   }
