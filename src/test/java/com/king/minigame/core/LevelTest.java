@@ -1,18 +1,13 @@
-package com.king.minigame.score;
+package com.king.minigame.core;
 
 import org.testng.annotations.Test;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.SortedSet;
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 

@@ -6,6 +6,8 @@ Time zone is ignored.
 
 YAGNI: nada que no se necesite ahora mismo.
 
+Fault barrier en el handle()
+
 Avoided primitives
 Return immutable values
 Map me asegura que hay un único Key (e.g. para los usuarios).

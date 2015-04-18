@@ -1,7 +1,6 @@
-package com.king.minigame.score;
+package com.king.minigame.core;
 
 import java.time.Instant;
-import java.util.Comparator;
 
 /**
  *  Class responsible for storing a score value and the moment when it happened.

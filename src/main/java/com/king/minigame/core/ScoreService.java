@@ -1,11 +1,10 @@
-package com.king.minigame.score;
+package com.king.minigame.core;
 
 import com.king.minigame.session.SessionService;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  *
@@ -22,7 +21,7 @@ public class ScoreService {
     this.sessionService = sessionService;
   }
 
-  public void saveScoreFor(Integer userId, Integer levelId, Integer scoreValue) {
+  public void postUserScoreToList(Integer userId, Integer levelId, Integer scoreValue) {
 
     if (!sessionService.hasUserValidSessionKey(userId)) {
       throw new IllegalStateException("The user " + userId + " is not active currently.");

@@ -1,4 +1,4 @@
-package com.king.minigame.score;
+package com.king.minigame.core;
 
 import org.testng.annotations.Test;
 
@@ -6,7 +6,6 @@ import java.time.Instant;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.testng.Assert.*;
 
 @Test
 public class ScoreTest {

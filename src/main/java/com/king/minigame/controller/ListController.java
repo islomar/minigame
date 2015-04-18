@@ -1,7 +1,7 @@
 package com.king.minigame.controller;
 
-import com.king.minigame.score.Score;
-import com.king.minigame.score.ScoreService;
+import com.king.minigame.core.Score;
+import com.king.minigame.core.ScoreService;
 import com.king.minigame.session.SessionService;
 
 import java.time.Clock;
@@ -29,6 +29,10 @@ public class ListController {
 
     String highScoreListInCsvFormat = parseToCsv(highScoreList);
     return highScoreListInCsvFormat;
+  }
+
+  public void postUserScoreToList(Integer userId, Integer levelId, Integer scoreValue) {
+    scoreService.postUserScoreToList(userId, levelId, scoreValue);
   }
 
   private Map<Integer, Score> hardcode() {

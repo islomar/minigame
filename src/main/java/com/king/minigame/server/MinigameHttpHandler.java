@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +28,8 @@ public class MinigameHttpHandler implements HttpHandler {
 
   private static final Pattern LOGIN_PATTERN = Pattern.compile("/(\\d*?)/login");
   private static final Pattern HIGH_SCORE_LIST_PATTERN = Pattern.compile("/(\\d*?)/highscorelist");
+  private static final Pattern POST_USER_SCORE_TO_LEVEL_PATTERN = Pattern.compile("/(\\d*?)/score");
+  ;
 
   private final LoginController loginController;
   private final ListController listController;
@@ -44,7 +48,6 @@ public class MinigameHttpHandler implements HttpHandler {
 
       InputStream requestBody = he.getRequestBody();
 
-
       HttpRequestMethod requestMethod = retrieveHttpRequestMethod(he);
 
       switch (requestMethod) {
@@ -52,10 +55,15 @@ public class MinigameHttpHandler implements HttpHandler {
           response = handleGetRequest(he, uri);
           break;
         case POST:
+          response = handlePostRequest(he, uri);
           break;
         default:
           response = Optional.of(new Response(HttpURLConnection.HTTP_BAD_METHOD, ""));
       }
+    } catch (IllegalStateException ex) {
+      response = Optional.of(new Response(HttpURLConnection.HTTP_FORBIDDEN, ""));
+    } catch (IllegalArgumentException ex) {
+      response = Optional.of(new Response(HttpURLConnection.HTTP_BAD_REQUEST, ""));
     } catch (Exception ex) {
       response = Optional.of(new Response(HttpURLConnection.HTTP_INTERNAL_ERROR, ""));
     }
@@ -63,17 +71,16 @@ public class MinigameHttpHandler implements HttpHandler {
     response = handleHttpNotFound(response);
 
     he.sendResponseHeaders(response.get().getHttpStatusCode(), response.get().getResponseMessage().length());
-//    String query = he.getRequestURI().getQuery();
-//    response += "query: " + query + "\n";
-
     Headers h = he.getResponseHeaders();
     h.set("Content-Type", "text/plain");
 
     writeOutputStream(he, response.get().getResponseMessage());
   }
 
-  private void writeOutputStream(HttpExchange he, String responseMessage) throws IOException {OutputStream
-      os = he.getResponseBody();
+  private void writeOutputStream(HttpExchange he, String responseMessage) throws IOException {
+
+    OutputStream
+        os = he.getResponseBody();
     os.write(responseMessage.getBytes());
     os.close();
   }
@@ -90,6 +97,15 @@ public class MinigameHttpHandler implements HttpHandler {
     return response;
   }
 
+  private Optional<Response> handlePostRequest(HttpExchange he, URI uri) throws IOException {
+
+    Optional<Response> response = Optional.empty();
+    if (isPostUserScoreToALevelRequest(uri)) {
+      response = handlePostUserScoreToLevel(he, uri);
+    }
+    return response;
+  }
+
   private Optional<Response> handleHttpNotFound(Optional<Response> response) {
 
     if (!response.isPresent()) {
@@ -99,6 +115,7 @@ public class MinigameHttpHandler implements HttpHandler {
   }
 
   private HttpRequestMethod retrieveHttpRequestMethod(HttpExchange he) {
+
     if (isRequest(POST, he)) {
       return POST;
     } else if (isRequest(GET, he)) {
@@ -110,14 +127,17 @@ public class MinigameHttpHandler implements HttpHandler {
 
   private boolean isLoginRequest(URI uri) {
 
-    Matcher loginMatcher = getLoginUrlRequestMatcher(uri);
-    return loginMatcher.find();
+    return loginUrlRequestMatcher(uri).find();
   }
 
   private boolean isHighScoreListRequest(URI uri) {
 
-    Matcher highScoreListMatcher = getHighScoreListRequestMatcher(uri);
-    return highScoreListMatcher.find();
+    return highScoreListRequestMatcher(uri).find();
+  }
+
+  private boolean isPostUserScoreToALevelRequest(URI uri) {
+
+    return postUserScoreToALevelMatcher(uri).find();
   }
 
   private boolean isRequest(HttpRequestMethod method, HttpExchange he) {
@@ -129,7 +149,7 @@ public class MinigameHttpHandler implements HttpHandler {
 
     String sesskionKey = "";
     int statusCode;
-    Matcher loginMatcher = getLoginUrlRequestMatcher(uri);
+    Matcher loginMatcher = loginUrlRequestMatcher(uri);
     if (loginMatcher.find()) {
       Integer userId = Integer.valueOf(loginMatcher.group(1));
       sesskionKey = loginController.login(userId);
@@ -140,30 +160,83 @@ public class MinigameHttpHandler implements HttpHandler {
     }
   }
 
-  private Matcher getLoginUrlRequestMatcher(URI uri) {
 
-    String path = uri.getPath();
-    return LOGIN_PATTERN.matcher(path);
-  }
-
-  private Optional<Response> handleHighScoreListRequestIfApplies(HttpExchange he, URI uri) throws IOException {
+  private Optional<Response> handleHighScoreListRequestIfApplies(HttpExchange he, URI uri)
+      throws IOException {
 
     String highScoreListInCsvFormat = "";
     int statusCode;
-    Matcher highScoreListMatcher = getHighScoreListRequestMatcher(uri);
+    Matcher highScoreListMatcher = highScoreListRequestMatcher(uri);
     if (highScoreListMatcher.find()) {
       Integer listId = Integer.valueOf(highScoreListMatcher.group(1));
       highScoreListInCsvFormat = listController.getHighScoreListForLevel(listId);
       statusCode = HttpURLConnection.HTTP_OK;
-      return Optional.ofNullable(new Response(statusCode, highScoreListInCsvFormat));
+      return Optional.of(new Response(statusCode, highScoreListInCsvFormat));
     } else {
       return Optional.empty();
     }
   }
 
-  private Matcher getHighScoreListRequestMatcher(URI uri) {
+  private Optional<Response> handlePostUserScoreToLevel(HttpExchange he, URI uri) throws IOException {
+
+    Matcher postUserScoreToALevelMatcher = postUserScoreToALevelMatcher(uri);
+    if (postUserScoreToALevelMatcher.find()) {
+      Integer levelId = Integer.valueOf(postUserScoreToALevelMatcher.group(1));
+
+      String sessionKey = retrieveSessionKey(he);
+      Integer scoreValue = retrieveScoreValue(he);
+
+      listController.postUserScoreToList(null, levelId, scoreValue);
+      return Optional.of(new Response(HttpURLConnection.HTTP_OK, ""));
+    } else {
+      return Optional.empty();
+    }
+
+  }
+
+  private Integer retrieveScoreValue(HttpExchange he) throws IOException {
+
+    InputStream is = he.getRequestBody();
+    byte[] buf = new byte[1000];
+    int len = is.read(buf);
+    String bodyString = new String(buf, 0, len);
+    return Integer.valueOf(bodyString);
+  }
+
+  private String retrieveSessionKey(HttpExchange he) {
+
+    String query = he.getRequestURI().getQuery();
+    Map<String, String> params = getQueryMap(query);
+    return params.get("sessionkey");
+  }
+
+  private Matcher loginUrlRequestMatcher(URI uri) {
+
+    String path = uri.getPath();
+    return LOGIN_PATTERN.matcher(path);
+  }
+
+  private Matcher highScoreListRequestMatcher(URI uri) {
 
     String path = uri.getPath();
     return HIGH_SCORE_LIST_PATTERN.matcher(path);
+  }
+
+  private Matcher postUserScoreToALevelMatcher(URI uri) {
+
+    String path = uri.getPath();
+    return POST_USER_SCORE_TO_LEVEL_PATTERN.matcher(path);
+  }
+
+  private Map<String, String> getQueryMap(String query) {
+
+    String[] params = query.split("&");
+    Map<String, String> map = new HashMap<String, String>();
+    for (String param : params) {
+      String name = param.split("=")[0];
+      String value = param.split("=")[1];
+      map.put(name, value);
+    }
+    return map;
   }
 }
