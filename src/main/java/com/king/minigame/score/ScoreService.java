@@ -1,53 +1,65 @@
 package com.king.minigame.score;
 
-import com.google.common.collect.Lists;
-
 import com.king.minigame.session.SessionService;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
  */
 public class ScoreService {
 
+  private static final int MAX_NUMBER_OF_SCORES_FOR_HIGHLIST = 15;
   private Map<Integer, Level> levels;
 
   private SessionService sessionService;
 
   public ScoreService(SessionService sessionService) {
+    levels = new HashMap<>();
     this.sessionService = sessionService;
   }
 
-  public void saveScoreFor(Integer userId, String levelId, Integer scoreValue) {
+  public void saveScoreFor(Integer userId, Integer levelId, Integer scoreValue) {
 
     if (!sessionService.hasUserValidSessionKey(userId)) {
       throw new IllegalStateException("The user " + userId + " is not active currently.");
     }
-    //recover level
-    Level level = levels.get(levelId);
-    //create level if it does not exist
-    //create score
-    Score score = new Score(scoreValue, Instant.now());
-    //add score to level
+
+    Level level = retrieveLevel(levelId);
+
+    addScoreToLevel(userId, scoreValue, level);
+
+    levels.put(levelId, level);
+  }
+
+  private void addScoreToLevel(Integer userId, Integer scoreValue, Level level) {Score score = new Score(scoreValue, Instant
+      .now());
     level.addScoreForUser(userId, score);
+  }
+
+  private Level retrieveLevel(Integer levelId) {
+
+    Level level = levels.get(levelId);
+    if (level == null) {
+      level = new Level(levelId);
+    }
+    return level;
   }
 
   /**
    * Limited to 15.
    */
-//  public Map<Integer, Score> getHighScoreListForLevel(Integer levelId) {
-//
-//    Level level = levels.get(levelId);
-//    if (level == null) {
-//      return new HashMap<>();
-//    } else {
-//      return level.getScoreListOrderedByValueDesc();
-//    }
-//  }
+  public Map<Integer, Score> getHighScoreListForLevel(Integer levelId) {
+
+    Level level = levels.get(levelId);
+    if (level == null) {
+      return new HashMap<>();
+    } else {
+      return level.getMaximumScorePerUser();
+    }
+  }
 
 }

@@ -4,6 +4,8 @@ https://agilewarrior.wordpress.com/2015/04/18/classical-vs-mockist-testing/
 
 Time zone is ignored.
 
+YAGNI: nada que no se necesite ahora mismo.
+
 Avoided primitives
 Return immutable values
 Map me asegura que hay un único Key (e.g. para los usuarios).
@@ -40,6 +42,7 @@ PENDIENTE
 * Documentar métodos públicos
 * Puedo sustituir List por Collection???
 * Concurrencia en SessionCookieRepository, ConcurrencyMap???
+* Borrar todo código que no se pida ahora mismo!!! (YAGNI)
 
 
 

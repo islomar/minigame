@@ -1,16 +1,20 @@
 package com.king.minigame.score;
 
 import java.time.Instant;
+import java.util.Comparator;
 
 /**
- *
+ *  Class responsible for storing a score value and the moment when it happened.
  */
-public final class Score {
+public final class Score implements Comparable{
 
   private final Integer scoreValue;
   private final Instant creationTime;
 
   public Score(Integer scoreValue, Instant creationTime) {
+
+    validateParameters(scoreValue, creationTime);
+
     this.scoreValue = scoreValue;
     this.creationTime = creationTime;
   }
@@ -21,6 +25,13 @@ public final class Score {
 
   public Instant getCreationTime() {
     return creationTime;
+  }
+
+  private void validateParameters(Integer scoreValue, Instant creationTime) {
+
+    if (scoreValue == null || creationTime == null) {
+      throw new IllegalArgumentException("null values are not allowed");
+    }
   }
 
   @Override
@@ -48,5 +59,11 @@ public final class Score {
         .add("scoreValue", this.scoreValue)
         .add("creationTime", this.creationTime)
         .toString();
+  }
+
+  @Override
+  public int compareTo(Object o) {
+    Score otherScore = (Score)o;
+    return otherScore.getScoreValue() - this.getScoreValue();
   }
 }

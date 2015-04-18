@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -28,16 +30,27 @@ public class Level {
   }
 
   public int getLevelId() {
+
     return this.levelId;
   }
 
   public ListMultimap<Integer, Score> getUserScores() {
+
     return ImmutableListMultimap.copyOf(userScores);
   }
 
   public void addScoreForUser(Integer userId, Score score) {
 
+    validateUserScoreParameters(userId, score);
+
     userScores.put(userId, score);
+  }
+
+  private void validateUserScoreParameters(Integer userId, Score score) {
+
+    if (userId == null || score == null) {
+      throw new IllegalArgumentException("null values are not allowed");
+    }
   }
 
   //TODO: probably delete it
@@ -47,29 +60,40 @@ public class Level {
   }
 
   public List<Score> getScoreListOrderedByValueDesc() {
-    final Comparator<Map.Entry<Integer, Score>> sortLevelByScoreDescComparator = (p1, p2) -> Integer.compare(p2.getValue().getScoreValue(), p1.getValue().getScoreValue());
-    return userScores.entries().stream().sorted(sortLevelByScoreDescComparator).map(s -> s.getValue()).collect(Collectors.toList());
+
+    final Comparator<Map.Entry<Integer, Score>> sortLevelByScoreDescComparator = (p1, p2) -> Integer
+        .compare(p2.getValue().getScoreValue(), p1.getValue().getScoreValue());
+    return userScores.entries().stream().sorted(sortLevelByScoreDescComparator).map(s -> s.getValue())
+        .collect(Collectors.toList());
   }
 
-  public Integer getMaximumScore() {
-    return userScores.entries().stream().max(Comparator.comparing(item -> item.getValue().getScoreValue())).get().getValue().getScoreValue();
-  }
+//  public Integer getMaximumScore() {
+//    return userScores.entries().stream().max(Comparator.comparing(item -> item.getValue().getScoreValue())).get().getValue().getScoreValue();
+//  }
 
-  public Map<Integer, Optional<Score>>getMaximumScoreForUser() {
-    //Lists.newArrayList(userScores.values());
-    Map<Integer, Optional<Score>> result = new HashMap<>();
-    userScores.asMap().forEach( (k,v) -> result.put(k, getMaximumScore(v)) );
+  //WORKS PERFECT
+  public Map<Integer, Score> getMaximumScorePerUser() {
+
+    Map<Integer, Score> result = new HashMap<>();
+    userScores.asMap().forEach((k, v) -> result.put(k, getMaximumScore(v).get()));
     return result;
-
-//    userScores.entries().stream().forEach( s -> s.);
-//    List<Score> allUserScores = userScores.entries().stream().map( s -> s. Lists.newArrayList(userScores.values());
-//    return allUserScores.stream()
   }
+
+//  public SortedSet<Score> getSortedSet() {
+//
+//    SortedSet<Score> result = new TreeSet<>();
+//    userScores.asMap().forEach((k, v) -> result.add(getMaximumScore(v).get()));
+//    return result;
+//  }
 
   private Optional<Score> getMaximumScore(Collection<Score> v) {
-    return v.stream().max(Comparator.comparing(item -> item.getScoreValue()));}
+
+    Optional<Score> max = v.stream().max(Comparator.comparing(item -> item.getScoreValue()));
+    return max;
+  }
 
   private void validateParameters(Integer levelId) {
+
     if (levelId == null) {
       throw new IllegalArgumentException("levelId can not be null");
     }
