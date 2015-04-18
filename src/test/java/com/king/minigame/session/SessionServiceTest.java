@@ -81,7 +81,7 @@ public class SessionServiceTest {
 
     setTimeToNow();
     String sessionKey = sessionService.login(USER_ID);
-    boolean isUserActive = sessionService.isUserActive(ANOTHER_USER_ID);
+    boolean isUserActive = sessionService.hasUserValidSessionKey(ANOTHER_USER_ID);
 
     assertFalse(isUserActive);
   }
@@ -93,7 +93,7 @@ public class SessionServiceTest {
     String sessionKey = sessionService.login(USER_ID);
 
     setTimeToNow();
-    boolean isUserActive = sessionService.isUserActive(USER_ID);
+    boolean isUserActive = sessionService.hasUserValidSessionKey(USER_ID);
 
     assertTrue(isUserActive);
   }
@@ -105,7 +105,7 @@ public class SessionServiceTest {
     String sessionKey = sessionService.login(USER_ID);
 
     setTimeToNow();
-    boolean isUserActive = sessionService.isUserActive(USER_ID);
+    boolean isUserActive = sessionService.hasUserValidSessionKey(USER_ID);
 
     assertFalse(isUserActive);
   }

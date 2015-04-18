@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Class responsible for login users and querying if a user session is still active.
  */
-public class SessionService {
+public final class SessionService {
 
   private final static int SESSION_TIMEOUT_IN_MINUTES = 10;
   private SessionCookieRepository sessionCookieRepository;
@@ -36,7 +36,7 @@ public class SessionService {
   }
 
 
-  public boolean isUserActive(Integer userId) {
+  public boolean hasUserValidSessionKey(Integer userId) {
 
     Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.getSessionCookie(userId);
     if (sessionCookie.isPresent()) {
