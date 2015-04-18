@@ -80,3 +80,8 @@ public void whenSortingEntitiesByNameReversed_thenCorrectlySorted() {
     humans.sort(comparator.reversed());
     Assert.assertThat(humans.get(0), equalTo(new Human("Sarah", 10)));
 }
+
+
+//SERVER
+Asked, but no answer.
+Started with Servlets and Jetyy... then I realized about the use of HttpServer, I don't know if we I have done is what you meant.
