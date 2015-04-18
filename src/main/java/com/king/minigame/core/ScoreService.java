@@ -5,6 +5,7 @@ import com.king.minigame.session.SessionService;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -21,16 +22,15 @@ public class ScoreService {
     this.sessionService = sessionService;
   }
 
-  public void postUserScoreToList(Integer userId, Integer levelId, Integer scoreValue) {
+  public void postUserScoreToList(String sessionKey, Integer levelId, Integer scoreValue) {
 
-    if (!sessionService.hasUserValidSessionKey(userId)) {
-      throw new IllegalStateException("The user " + userId + " is not active currently.");
+    Optional<Integer> userId = sessionService.getUserIdForSessionKey(sessionKey);
+    if (!userId.isPresent()) {
+      throw new IllegalArgumentException("The sessionkey " + sessionKey + " is not active currently.");
     }
 
     Level level = retrieveLevel(levelId);
-
-    addScoreToLevel(userId, scoreValue, level);
-
+    addScoreToLevel(userId.get(), scoreValue, level);
     levels.put(levelId, level);
   }
 

@@ -45,7 +45,10 @@ PENDIENTE
 * Puedo sustituir List por Collection???
 * Concurrencia en SessionCookieRepository, ConcurrencyMap???
 * Borrar todo código que no se pida ahora mismo!!! (YAGNI)
-
+* ¿Es necesario hasUserValidSessionKey?
+* Tests:
+** Repository.findSessionCookieFromSessionKey
+** Repository en general
 
 
 Sort

@@ -2,6 +2,7 @@ package com.king.minigame.server;
 
 import com.king.minigame.controller.ListController;
 import com.king.minigame.controller.LoginController;
+import com.king.minigame.session.SessionCookieRepository;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -35,8 +36,9 @@ public class MinigameHttpHandler implements HttpHandler {
   private final ListController listController;
 
   public MinigameHttpHandler() {
-    this.loginController = new LoginController();
-    this.listController = new ListController();
+    SessionCookieRepository sessionCookieRepository = new SessionCookieRepository();
+    this.loginController = new LoginController(sessionCookieRepository);
+    this.listController = new ListController(sessionCookieRepository);
   }
 
   public void handle(HttpExchange he) throws IOException {
@@ -180,18 +182,22 @@ public class MinigameHttpHandler implements HttpHandler {
   private Optional<Response> handlePostUserScoreToLevel(HttpExchange he, URI uri) throws IOException {
 
     Matcher postUserScoreToALevelMatcher = postUserScoreToALevelMatcher(uri);
-    if (postUserScoreToALevelMatcher.find()) {
-      Integer levelId = Integer.valueOf(postUserScoreToALevelMatcher.group(1));
 
+    if (postUserScoreToALevelMatcher.find()) {
+      Integer levelId = retrieveLevelId(postUserScoreToALevelMatcher);
       String sessionKey = retrieveSessionKey(he);
       Integer scoreValue = retrieveScoreValue(he);
 
-      listController.postUserScoreToList(null, levelId, scoreValue);
+      listController.postUserScoreToList(sessionKey, levelId, scoreValue);
       return Optional.of(new Response(HttpURLConnection.HTTP_OK, ""));
     } else {
       return Optional.empty();
     }
 
+  }
+
+  private Integer retrieveLevelId(Matcher postUserScoreToALevelMatcher) {
+    return Integer.valueOf(postUserScoreToALevelMatcher.group(1));
   }
 
   private Integer retrieveScoreValue(HttpExchange he) throws IOException {

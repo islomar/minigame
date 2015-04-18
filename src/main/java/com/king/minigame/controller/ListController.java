@@ -2,6 +2,7 @@ package com.king.minigame.controller;
 
 import com.king.minigame.core.Score;
 import com.king.minigame.core.ScoreService;
+import com.king.minigame.session.SessionCookieRepository;
 import com.king.minigame.session.SessionService;
 
 import java.time.Clock;
@@ -17,8 +18,8 @@ public class ListController {
 
   private ScoreService scoreService;
 
-  public ListController() {
-    SessionService sessionService = new SessionService(Clock.systemUTC());
+  public ListController(SessionCookieRepository sessionCookieRespository) {
+    SessionService sessionService = new SessionService(Clock.systemUTC(), sessionCookieRespository);
     this.scoreService = new ScoreService(sessionService);
   }
 
@@ -31,8 +32,8 @@ public class ListController {
     return highScoreListInCsvFormat;
   }
 
-  public void postUserScoreToList(Integer userId, Integer levelId, Integer scoreValue) {
-    scoreService.postUserScoreToList(userId, levelId, scoreValue);
+  public void postUserScoreToList(String sessionKey, Integer levelId, Integer scoreValue) {
+    scoreService.postUserScoreToList(sessionKey, levelId, scoreValue);
   }
 
   private Map<Integer, Score> hardcode() {

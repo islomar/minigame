@@ -16,9 +16,9 @@ public class SessionService {
 
   private Clock clock;
 
-  public SessionService(final Clock clock) {
+  public SessionService(final Clock clock, SessionCookieRepository sessionCookieRepository) {
 
-    sessionCookieRepository = new SessionCookieRepository();
+    this.sessionCookieRepository = sessionCookieRepository;
     this.clock = clock;
   }
 
@@ -35,15 +35,21 @@ public class SessionService {
     }
   }
 
+  public boolean isSessionKeyValid(String sessionKey) {
+
+    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.findSessionCookieFromSessionKey(
+        sessionKey);
+    return sessionCookie.isPresent();
+  }
 
   public boolean hasUserValidSessionKey(Integer userId) {
 
-    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.getSessionCookie(userId);
-    if (sessionCookie.isPresent()) {
-      return isSessionCookieStillActive(sessionCookie.get());
-    } else {
-      return false;
-    }
+    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.findSessionCookieForUser(userId);
+    return sessionCookie.isPresent() && isSessionCookieStillActive(sessionCookie.get());
+  }
+
+  public Optional<Integer> getUserIdForSessionKey(String sessionKey) {
+    return this.sessionCookieRepository.findUserIdFromSessionKey(sessionKey);
   }
 
 
@@ -68,7 +74,7 @@ public class SessionService {
 
   private Optional<String> getActiveSessionKeyForUser(Integer userId) {
 
-    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.getSessionCookie(userId);
+    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.findSessionCookieForUser(userId);
     if (sessionCookie.isPresent() && isSessionCookieStillActive(sessionCookie.get())) {
       return Optional.of(sessionCookie.get().getSessionKey());
     } else {

@@ -35,7 +35,7 @@ public class SessionServiceTest {
   @BeforeClass
   public void setUpBeforeClass() {
 
-    sessionService = new SessionService(clockMock);
+    sessionService = new SessionService(clockMock, new SessionCookieRepository());
     initMocks(this);
   }
 
