@@ -1,7 +1,7 @@
 package com.king.minigame.controller;
 
 import com.king.minigame.core.Score;
-import com.king.minigame.core.ScoreService;
+import com.king.minigame.core.GameLevelService;
 import com.king.minigame.session.SessionCookieRepository;
 import com.king.minigame.session.SessionService;
 
@@ -14,26 +14,26 @@ import java.util.stream.Collectors;
 /**
  *
  */
-public class ListController {
+public class GameLevelController {
 
-  private ScoreService scoreService;
+  private GameLevelService gameLevelService;
 
-  public ListController(SessionCookieRepository sessionCookieRespository) {
+  public GameLevelController(SessionCookieRepository sessionCookieRespository) {
     SessionService sessionService = new SessionService(Clock.systemUTC(), sessionCookieRespository);
-    this.scoreService = new ScoreService(sessionService);
+    this.gameLevelService = new GameLevelService(sessionService);
   }
 
   public String getHighScoreListForLevel(Integer levelId) {
 
-    Map<Integer, Score> highScoreList = scoreService.getHighScoreListForLevel(levelId);
+    Map<Integer, Score> highScoreList = gameLevelService.getHighScoreListForLevel(levelId);
     //highScoreList = hardcode();
 
     String highScoreListInCsvFormat = parseToCsv(highScoreList);
     return highScoreListInCsvFormat;
   }
 
-  public void postUserScoreToList(String sessionKey, Integer levelId, Integer scoreValue) {
-    scoreService.postUserScoreToList(sessionKey, levelId, scoreValue);
+  public void postUserScoreToLevel(String sessionKey, Integer levelId, Integer scoreValue) {
+    gameLevelService.postUserScoreToList(sessionKey, levelId, scoreValue);
   }
 
   private Map<Integer, Score> hardcode() {

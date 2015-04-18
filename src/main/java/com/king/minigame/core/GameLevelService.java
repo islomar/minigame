@@ -10,14 +10,14 @@ import java.util.Optional;
 /**
  *
  */
-public class ScoreService {
+public class GameLevelService {
 
   private static final int MAX_NUMBER_OF_SCORES_FOR_HIGHLIST = 15;
   private Map<Integer, Level> levels;
 
   private SessionService sessionService;
 
-  public ScoreService(SessionService sessionService) {
+  public GameLevelService(SessionService sessionService) {
     levels = new HashMap<>();
     this.sessionService = sessionService;
   }
