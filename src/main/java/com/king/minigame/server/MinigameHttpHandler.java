@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import static com.king.minigame.server.HttpRequestMethod.GET;
 import static com.king.minigame.server.HttpRequestMethod.POST;
+import static com.king.minigame.server.HttpRequestMethod.UNKNOWN;
 
 /**
  * https://leonardom.wordpress.com/2009/08/06/getting-parameters-from-httpexchange/
@@ -43,41 +44,68 @@ public class MinigameHttpHandler implements HttpHandler {
 
       InputStream requestBody = he.getRequestBody();
 
-      int statusCode;
-      if (isRequest(POST, he)) {
-        statusCode = HttpURLConnection.HTTP_OK;
-      } else if (isRequest(GET, he)) {
-        if (isLoginRequest(uri)) {
-          response = handleLoginRequestIfApplies(he, uri);
-        } else if (isHighScoreListRequest(uri)) {
-          response = handleHighScoreListRequestIfApplies(he, uri);
-        }
-      } else {
-        statusCode = HttpURLConnection.HTTP_BAD_METHOD;
+
+      HttpRequestMethod requestMethod = retrieveHttpRequestMethod(he);
+
+      switch (requestMethod) {
+        case GET:
+          response = handleGetRequest(he, uri);
+          break;
+        case POST:
+          break;
+        default:
+          response = Optional.of(new Response(HttpURLConnection.HTTP_BAD_METHOD, ""));
       }
     } catch (Exception ex) {
       response = Optional.of(new Response(HttpURLConnection.HTTP_INTERNAL_ERROR, ""));
     }
 
-    int statusCode;
-    String responseMessage = "";
-    if (response.isPresent()) {
-      statusCode = response.get().getHttpStatusCode();
-      responseMessage = response.get().getResponseMessage();
-    } else {
-      statusCode = HttpURLConnection.HTTP_NOT_FOUND;
-    }
+    response = handleHttpNotFound(response);
 
-    he.sendResponseHeaders(statusCode, responseMessage.length());
+    he.sendResponseHeaders(response.get().getHttpStatusCode(), response.get().getResponseMessage().length());
 //    String query = he.getRequestURI().getQuery();
 //    response += "query: " + query + "\n";
 
     Headers h = he.getResponseHeaders();
     h.set("Content-Type", "text/plain");
 
-    OutputStream os = he.getResponseBody();
+    writeOutputStream(he, response.get().getResponseMessage());
+  }
+
+  private void writeOutputStream(HttpExchange he, String responseMessage) throws IOException {OutputStream
+      os = he.getResponseBody();
     os.write(responseMessage.getBytes());
     os.close();
+  }
+
+  private Optional<Response> handleGetRequest(HttpExchange he, URI uri)
+      throws IOException {
+
+    Optional<Response> response = Optional.empty();
+    if (isLoginRequest(uri)) {
+      response = handleLoginRequestIfApplies(he, uri);
+    } else if (isHighScoreListRequest(uri)) {
+      response = handleHighScoreListRequestIfApplies(he, uri);
+    }
+    return response;
+  }
+
+  private Optional<Response> handleHttpNotFound(Optional<Response> response) {
+
+    if (!response.isPresent()) {
+      response = Optional.of(new Response(HttpURLConnection.HTTP_NOT_FOUND, ""));
+    }
+    return response;
+  }
+
+  private HttpRequestMethod retrieveHttpRequestMethod(HttpExchange he) {
+    if (isRequest(POST, he)) {
+      return POST;
+    } else if (isRequest(GET, he)) {
+      return GET;
+    } else {
+      return UNKNOWN;
+    }
   }
 
   private boolean isLoginRequest(URI uri) {
