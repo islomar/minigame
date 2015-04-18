@@ -10,10 +10,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.king.minigame.server.HttpRequestMethod.*;
+import static com.king.minigame.server.HttpRequestMethod.GET;
+import static com.king.minigame.server.HttpRequestMethod.POST;
 
 /**
  * https://leonardom.wordpress.com/2009/08/06/getting-parameters-from-httpexchange/
@@ -29,22 +31,35 @@ public class MinigameHttpHandler implements HttpHandler {
 
   public void handle(HttpExchange he) throws IOException {
 
-    URI uri = he.getRequestURI();
-    String response = "";//"Path: " + uri.getPath() + "\n";
+    Optional<Response> response = Optional.empty();//"Path: " + uri.getPath() + "\n";
+    try {
+      URI uri = he.getRequestURI();
 
-    InputStream requestBody = he.getRequestBody();
+      InputStream requestBody = he.getRequestBody();
 
-    int statusCode;
-    if (isRequest(POST, he)) {
-      response += " - POST\n";
-      statusCode = HttpURLConnection.HTTP_OK;
-    } else if (isRequest(GET, he)) {
-      //response += " - GET\n";
-      response += handleLoginRequest(he, uri);
-    } else {
-      statusCode = HttpURLConnection.HTTP_BAD_METHOD;
+      int statusCode;
+      if (isRequest(POST, he)) {
+        //response += " - POST\n";
+        statusCode = HttpURLConnection.HTTP_OK;
+      } else if (isRequest(GET, he)) {
+        response = handleLoginRequest(he, uri);
+      } else {
+        statusCode = HttpURLConnection.HTTP_BAD_METHOD;
+      }
+    } catch (Exception ex) {
+      response = Optional.of(new Response(HttpURLConnection.HTTP_INTERNAL_ERROR, ""));
     }
 
+    int statusCode;
+    String responseMessage = "";
+    if (response.isPresent()) {
+      statusCode = response.get().getHttpStatusCode();
+      responseMessage = response.get().getResponseMessage();
+    } else {
+      statusCode = HttpURLConnection.HTTP_NOT_FOUND;
+    }
+
+    he.sendResponseHeaders(statusCode, responseMessage.length());
 //    String query = he.getRequestURI().getQuery();
 //    response += "query: " + query + "\n";
 
@@ -52,7 +67,7 @@ public class MinigameHttpHandler implements HttpHandler {
     h.set("Content-Type", "text/plain");
 
     OutputStream os = he.getResponseBody();
-    os.write(response.getBytes());
+    os.write(responseMessage.getBytes());
     os.close();
   }
 
@@ -61,7 +76,7 @@ public class MinigameHttpHandler implements HttpHandler {
     return method.name().equalsIgnoreCase(he.getRequestMethod());
   }
 
-  public String handleLoginRequest(HttpExchange he, URI uri) throws IOException {
+  public Optional<Response> handleLoginRequest(HttpExchange he, URI uri) throws IOException {
 
     String sesskionKey = "";
     int statusCode;
@@ -70,11 +85,11 @@ public class MinigameHttpHandler implements HttpHandler {
       Integer userId = Integer.valueOf(loginMatcher.group(1));
       sesskionKey = loginController.login(userId);
       statusCode = HttpURLConnection.HTTP_OK;
+      return Optional.ofNullable(new Response(statusCode, sesskionKey));
     } else {
-      statusCode = HttpURLConnection.HTTP_NOT_FOUND;
+      return Optional.empty();
+      //statusCode = HttpURLConnection.HTTP_NOT_FOUND;
     }
-    he.sendResponseHeaders(statusCode, sesskionKey.length());
-    return sesskionKey;
   }
 
   private Matcher getLoginUrlRequestMatcher(URI uri) {
