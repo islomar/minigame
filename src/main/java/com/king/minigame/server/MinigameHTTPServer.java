@@ -2,8 +2,6 @@ package com.king.minigame.server;
 
 import com.sun.net.httpserver.HttpServer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,7 +13,6 @@ import java.util.concurrent.Executors;
  */
 public class MinigameHTTPServer {
 
-  private final static Logger LOG = LoggerFactory.getLogger(MinigameHTTPServer.class);
   private static final int PORT = 8081;
 
   public static void main(String[] args) {
@@ -24,12 +21,12 @@ public class MinigameHTTPServer {
       HttpServer server = HttpServer.create(new InetSocketAddress(PORT),0);
       server.createContext("/", new MinigameHttpHandler());
       server.setExecutor(Executors.newCachedThreadPool());
-      LOG.debug("Starting server in port " + PORT);
+      System.out.println("Starting server in port " + PORT);
       server.start();
-      LOG.debug("Server successfully started in port " + PORT);
+      System.out.println("Server successfully started in port " + PORT);
     } catch (IOException e) {
       e.printStackTrace();
-      LOG.error(e.getMessage());
+      System.out.println(e.getMessage());
     }
   }
 

@@ -1,11 +1,17 @@
 package com.king.minigame.core;
 
+import com.google.common.collect.ListMultimap;
+
+import com.king.minigame.session.SessionCookie;
 import com.king.minigame.session.SessionService;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 /**
  *
@@ -44,10 +50,43 @@ public class GameLevelService {
     if (level == null) {
       return new HashMap<>();
     } else {
-      return level.getMaximumScorePerUser();
+      return getMaximumScorePerUserForLevel(level);
     }
   }
 
+
+  //WORKS PERFECT, but it should be in the Service
+  private Map<Integer, Score> getMaximumScorePerUserForLevel(Level level) {
+
+    ListMultimap<Integer, Score> allUserScores = level.getAllUserScores();
+
+    Map<Integer, Score> unsortedUserScores = mapToMaximumScorePerUser(allUserScores);
+    return sortUserScores(unsortedUserScores);
+  }
+
+
+  private Map<Integer, Score> sortUserScores(Map<Integer, Score> unsortedUserScores) {
+
+
+    Map<Integer, Score> sortedUserScores = new TreeMap<>(new MapComparatorByValueDesc(unsortedUserScores));
+    sortedUserScores.putAll(unsortedUserScores);
+
+    return sortedUserScores;
+  }
+
+
+  private Map<Integer, Score> mapToMaximumScorePerUser(ListMultimap<Integer, Score> userScores) {
+    Map<Integer, Score> unsortedUserScores = new HashMap<>();
+    userScores.asMap().forEach((k, v) -> unsortedUserScores.put(k, getMaximumScore(v).get()));
+    return unsortedUserScores;
+  }
+
+
+  private Optional<Score> getMaximumScore(Collection<Score> v) {
+
+    Optional<Score> max = v.stream().max(Comparator.comparing(item -> item.getScoreValue()));
+    return max;
+  }
 
   private void addScoreToLevel(Integer userId, Integer scoreValue, Level level) {
     Score score = new Score(scoreValue, Instant.now());

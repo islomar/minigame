@@ -8,6 +8,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -82,6 +83,29 @@ public class GameLevelServiceTest {
 
     assertThat(gameLevelService.getHighScoreListForLevel(levelId).size(), is(3));
     assertThat(gameLevelService.getHighScoreListForLevel(levelId), is(expectedUserScoreMap));
+  }
+
+  //TODO: use it??
+  private void addScoresToLevel(Level level, int numberOfUsersToCreate, int numberOfScoresPerUserToCreate) {
+
+    Integer userId = 1;
+
+    for (int i = 0; i < numberOfUsersToCreate; i++) {
+      Integer initialScoreValue = 100;
+      generateScores(numberOfScoresPerUserToCreate, level, initialScoreValue, userId);
+      userId++;
+    }
+  }
+
+  private Integer generateScores(int numberOfScoresToCreate, Level level, Integer scoreValue,
+                                 Integer userId) {
+
+    for (int j = 0; j < numberOfScoresToCreate; j++) {
+      Score score = new Score(scoreValue, Instant.now().minus(j, ChronoUnit.SECONDS));
+      level.addScoreForUser(userId, score);
+      scoreValue += 100;
+    }
+    return scoreValue;
   }
 
 }

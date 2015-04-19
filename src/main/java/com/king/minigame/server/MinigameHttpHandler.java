@@ -7,9 +7,6 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,8 +26,6 @@ import static com.king.minigame.server.HttpRequestMethod.UNKNOWN;
  * https://leonardom.wordpress.com/2009/08/06/getting-parameters-from-httpexchange/
  */
 public class MinigameHttpHandler implements HttpHandler {
-
-  private final static Logger LOG = LoggerFactory.getLogger(MinigameHttpHandler.class);
 
   private static final Pattern LOGIN_PATTERN = Pattern.compile("/(\\d*?)/login");
   private static final Pattern HIGH_SCORE_LIST_PATTERN = Pattern.compile("/(\\d*?)/highscorelist");
@@ -52,7 +47,7 @@ public class MinigameHttpHandler implements HttpHandler {
 
     try {
       URI uri = he.getRequestURI();
-      LOG.debug("Received request for " + uri);
+      System.out.println("Received request for " + uri);
 
       InputStream requestBody = he.getRequestBody();
 

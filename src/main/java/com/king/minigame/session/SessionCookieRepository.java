@@ -9,29 +9,29 @@ import java.util.Optional;
  */
 public final class SessionCookieRepository {
 
-  private Map<Integer, SessionCookie> sessionKeyStorage;
+  private Map<Integer, SessionCookie> userSessionKeyStore;
 
 
   public SessionCookieRepository() {
 
-    this.sessionKeyStorage = new HashMap<>();
+    this.userSessionKeyStore = new HashMap<>();
   }
 
   public void saveSessionCookie(Integer userId, SessionCookie sessionCookie) {
 
-    this.sessionKeyStorage.put(userId, sessionCookie);
+    this.userSessionKeyStore.put(userId, sessionCookie);
   }
 
 
   public void removeAllSessions() {
 
-    sessionKeyStorage.clear();
+    userSessionKeyStore.clear();
   }
 
 
   public Optional<SessionCookie> findSessionCookieForUser(Integer userId) {
 
-    return Optional.ofNullable(this.sessionKeyStorage.get(userId));
+    return Optional.ofNullable(this.userSessionKeyStore.get(userId));
   }
 
 
@@ -40,7 +40,7 @@ public final class SessionCookieRepository {
     if (sessionKey == null) {
       return Optional.empty();
     }
-    return Optional.ofNullable(sessionKeyStorage.entrySet().stream()
+    return Optional.ofNullable(userSessionKeyStore.entrySet().stream()
                                    .filter(s -> sessionKey.equalsIgnoreCase(s.getValue().getSessionKey()))
                                    .findFirst().get().getValue());
   }
@@ -48,10 +48,7 @@ public final class SessionCookieRepository {
 
   public Optional<Integer> findUserIdFromSessionKey(String sessionKey) {
 
-//    if (sessionKey == null) {
-//      return Optional.empty();
-//    }
-    Optional<Map.Entry<Integer, SessionCookie>> userIdFound = sessionKeyStorage.entrySet().stream()
+    Optional<Map.Entry<Integer, SessionCookie>> userIdFound = userSessionKeyStore.entrySet().stream()
         .filter(s -> s.getValue().getSessionKey().equalsIgnoreCase(sessionKey)).findFirst();
 
     if (userIdFound.isPresent()) {

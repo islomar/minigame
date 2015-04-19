@@ -107,3 +107,8 @@ public void whenSortingEntitiesByNameReversed_thenCorrectlySorted() {
 //SERVER
 Asked, but no answer.
 Started with Servlets and Jetyy... then I realized about the use of HttpServer, I don't know if we I have done is what you meant.
+
+
+IMPROVEMENTS:
+Frameworks
+Use logback
