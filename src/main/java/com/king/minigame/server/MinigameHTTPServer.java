@@ -1,32 +1,33 @@
 package com.king.minigame.server;
 
+import com.king.minigame.server.handler.MinigameHttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
-/**
- *        http://www.microhowto.info/howto/serve_web_pages_using_an_embedded_http_server_in_java.html
- *        http://www.programcreek.com/java-api-examples/index.php?api=com.sun.net.httpserver.HttpServer
- */
+import static com.king.minigame.utils.Logger.log;
+import static java.lang.System.exit;
+
+
+
 public class MinigameHTTPServer {
 
   private static final int PORT = 8081;
 
-  public static void main(String[] args) {
-
+  public void startUp() {
     try {
-      HttpServer server = HttpServer.create(new InetSocketAddress(PORT),0);
+      HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
       server.createContext("/", new MinigameHttpHandler());
       server.setExecutor(Executors.newCachedThreadPool());
-      System.out.println("Starting server in port " + PORT);
+
+      log("Starting server in port " + PORT);
       server.start();
-      System.out.println("Server successfully started in port " + PORT);
-    } catch (IOException e) {
+      log("Server successfully started in port " + PORT);
+    } catch (Exception e) {
       e.printStackTrace();
       System.out.println(e.getMessage());
+      exit(-1);
     }
   }
 

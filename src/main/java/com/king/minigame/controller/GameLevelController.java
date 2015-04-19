@@ -30,7 +30,7 @@ public class GameLevelController {
   }
 
   public void postUserScoreToLevel(String sessionKey, Integer levelId, Integer scoreValue) {
-    gameLevelService.postUserScoreToList(sessionKey, levelId, scoreValue);
+    gameLevelService.postUserScoreToLevel(sessionKey, levelId, scoreValue);
   }
 
   private String parseToCsv(Map<Integer, Score> highScoreList) {

@@ -1,8 +1,10 @@
-Time invested:  18 horas.
+Time invested:  20 horas.
 
 Requirements: you need Java 8 (no JDK requirement).
 Java 8, better use of Streams, collectors, etc... I just started :-)
 https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html
+
+Incluir en PDF screenshot con el coverage.
 
 https://agilewarrior.wordpress.com/2015/04/18/classical-vs-mockist-testing/
 

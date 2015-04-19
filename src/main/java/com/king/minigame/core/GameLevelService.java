@@ -28,7 +28,7 @@ public class GameLevelService {
     this.sessionService = sessionService;
   }
 
-  public void postUserScoreToList(String sessionKey, Integer levelId, Integer scoreValue) {
+  public void postUserScoreToLevel(String sessionKey, Integer levelId, Integer scoreValue) {
 
     Optional<Integer> userId = sessionService.getUserIdForSessionKey(sessionKey);
     if (!userId.isPresent()) {
@@ -55,7 +55,6 @@ public class GameLevelService {
   }
 
 
-  //WORKS PERFECT, but it should be in the Service
   private Map<Integer, Score> getMaximumScorePerUserForLevel(Level level) {
 
     ListMultimap<Integer, Score> allUserScores = level.getAllUserScores();
