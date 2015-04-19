@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -69,12 +70,27 @@ public class Level {
 //    return userScores.entries().stream().max(Comparator.comparing(item -> item.getValue().getScoreValue())).get().getValue().getScoreValue();
 //  }
 
-  //WORKS PERFECT
+  //WORKS PERFECT, but it should be in the Service
   public Map<Integer, Score> getMaximumScorePerUser() {
 
-    Map<Integer, Score> result = new HashMap<>();
-    userScores.asMap().forEach((k, v) -> result.put(k, getMaximumScore(v).get()));
-    return result;
+    Map<Integer, Score> unsortedUserScores = mapToMaximumScorePerUser();
+    return sortUserScores(unsortedUserScores);
+  }
+
+  private Map<Integer, Score> mapToMaximumScorePerUser() {
+    Map<Integer, Score> unsortedUserScores = new HashMap<>();
+    userScores.asMap().forEach((k, v) -> unsortedUserScores.put(k, getMaximumScore(v).get()));
+    return unsortedUserScores;
+  }
+
+  private Map<Integer, Score> sortUserScores(Map<Integer, Score> unsortedUserScores) {
+
+
+    Map<Integer, Score> sortedUserScores = new TreeMap<>(new ValueComparatorDesc(unsortedUserScores));
+    sortedUserScores.putAll(unsortedUserScores);
+
+    //.collect(Collectors.toMap(Map.Entry::getKey, s -> s.getValue()));
+    return sortedUserScores;
   }
 
 //  public SortedSet<Score> getSortedSet() {

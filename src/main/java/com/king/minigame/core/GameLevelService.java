@@ -34,19 +34,6 @@ public class GameLevelService {
     levels.put(levelId, level);
   }
 
-  private void addScoreToLevel(Integer userId, Integer scoreValue, Level level) {Score score = new Score(scoreValue, Instant
-      .now());
-    level.addScoreForUser(userId, score);
-  }
-
-  private Level retrieveLevel(Integer levelId) {
-
-    Level level = levels.get(levelId);
-    if (level == null) {
-      level = new Level(levelId);
-    }
-    return level;
-  }
 
   /**
    * Limited to 15.
@@ -59,6 +46,21 @@ public class GameLevelService {
     } else {
       return level.getMaximumScorePerUser();
     }
+  }
+
+
+  private void addScoreToLevel(Integer userId, Integer scoreValue, Level level) {
+    Score score = new Score(scoreValue, Instant.now());
+    level.addScoreForUser(userId, score);
+  }
+
+  private Level retrieveLevel(Integer levelId) {
+
+    Level level = levels.get(levelId);
+    if (level == null) {
+      level = new Level(levelId);
+    }
+    return level;
   }
 
 }

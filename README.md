@@ -1,4 +1,8 @@
-Time invested:  7 horas.
+Time invested:  18 horas.
+
+Requirements: you need Java 8 (no JDK requirement).
+Java 8, better use of Streams, collectors, etc... I just started :-)
+https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html
 
 https://agilewarrior.wordpress.com/2015/04/18/classical-vs-mockist-testing/
 
@@ -41,14 +45,27 @@ http://en.wikipedia.org/wiki/Session_fixation
 CQRS: basic separate command and query.
 
 PENDIENTE
-* Documentar métodos públicos
+
+MAÑANA
+* Ordenar correctamente resultado de highscorelist   (1 hora)
+* Renombrar donde esté el main a App                        (10 minutos)
+* Documentar métodos públicos                                           (30 minutos)
+* Borrar todo código que no se pida ahora mismo!!! (YAGNI)                         (30 minutos)
+* ¿Es necesario hasUserValidSessionKey?                                       (30 minutos)
+* Borrar código no usado                              (30 minutos)
+* Refactor Handler
+* Poner en limpio esta documentación                  (30 minutos)
+*
+
+
+TARDE
 * Puedo sustituir List por Collection???
 * Concurrencia en SessionCookieRepository, ConcurrencyMap???
-* Borrar todo código que no se pida ahora mismo!!! (YAGNI)
-* ¿Es necesario hasUserValidSessionKey?
+
 * Tests:
 ** Repository.findSessionCookieFromSessionKey
 ** Repository en general
+** Tests de integración!!!!
 
 
 Sort

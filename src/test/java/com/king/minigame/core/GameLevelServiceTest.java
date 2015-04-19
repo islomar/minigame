@@ -7,9 +7,16 @@ import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.testng.Assert.assertTrue;
@@ -42,36 +49,41 @@ public class GameLevelServiceTest {
     assertTrue(gameLevelService.getHighScoreListForLevel(levelId).isEmpty());
   }
 
-  @Test(enabled = false)
   //PENDING TO MAKE IT WORK
   public void xxx() {
 
-//    String sessionKey = UUID.randomUUID().toString();
-//    Integer levelId = 123;
-//    Integer scoreValue = 300;
-//
-//    Map<Integer, Score> expectedUserScoreMap = new HashMap<>();
-//
-//    //TODO: hacer tests con sesión inválida, ver que no funciona
-//    when(sessionService.hasUserValidSessionKey(anyInt())).thenReturn(true);
-//    scoreService.postUserScoreToLevel(sessionKey, levelId, scoreValue);
-//    expectedUserScoreMap.put(sessionKey, new Score(scoreValue, Instant.now()));
-//
-//    scoreService.postUserScoreToLevel(sessionKey, levelId, 200);
-//    expectedUserScoreMap.put(sessionKey, new Score(scoreValue, Instant.now()));
-//
-//    scoreService.postUserScoreToLevel(2, levelId, 100);
-//    expectedUserScoreMap.put(2, new Score(100, Instant.now()));
-//
-//    scoreService.postUserScoreToLevel(3, levelId, 500);
-//    expectedUserScoreMap.put(3, new Score(500, Instant.now()));
-//
-//    scoreService.postUserScoreToLevel(userId, 43, scoreValue);
-//    expectedUserScoreMap.put(userId, new Score(43, Instant.now()));
-//
-//
-//    assertThat(scoreService.getHighScoreListForLevel(levelId).size(), is(3));
-//    assertThat(scoreService.getHighScoreListForLevel(levelId), is(expectedUserScoreMap));
+    Integer levelId = 123;
+    Integer anotherLevelId = 456;
+    Integer scoreValue = 300;
+
+    Map<Integer, Score> expectedUserScoreMap = new HashMap<>();
+
+    //TODO: hacer tests con sesión inválida, ver que no funciona
+    when(sessionService.getUserIdForSessionKey("1")).thenReturn(Optional.of(1));
+    when(sessionService.getUserIdForSessionKey("2")).thenReturn(Optional.of(2));
+    when(sessionService.getUserIdForSessionKey("3")).thenReturn(Optional.of(3));
+    when(sessionService.getUserIdForSessionKey("4")).thenReturn(Optional.of(4));
+    when(sessionService.getUserIdForSessionKey("5")).thenReturn(Optional.of(5));
+    when(sessionService.getUserIdForSessionKey("6")).thenReturn(Optional.of(6));
+
+    gameLevelService.postUserScoreToList("1", levelId, 300);
+    expectedUserScoreMap.put(1, new Score(300, Instant.now()));
+
+    gameLevelService.postUserScoreToList("1", levelId, 200);
+
+    gameLevelService.postUserScoreToList("2", levelId, 100);
+    expectedUserScoreMap.put(2, new Score(100, Instant.now()));
+
+    gameLevelService.postUserScoreToList("3", levelId, 500);
+
+    gameLevelService.postUserScoreToList("3", levelId, 888);
+    expectedUserScoreMap.put(3, new Score(888, Instant.now()));
+
+    gameLevelService.postUserScoreToList("4", anotherLevelId, 300);
+
+
+    assertThat(gameLevelService.getHighScoreListForLevel(levelId).size(), is(3));
+    assertThat(gameLevelService.getHighScoreListForLevel(levelId), is(expectedUserScoreMap));
   }
 
 }

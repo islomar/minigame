@@ -66,7 +66,6 @@ public class LevelTest {
   }
 
   //This one works fine, just refactor and finish
-  @Test(enabled = false)
   public void getMaximumScorePerUser() {
 
     Integer userId1 = 1;
