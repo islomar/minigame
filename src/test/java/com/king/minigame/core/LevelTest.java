@@ -14,16 +14,6 @@ import static org.testng.Assert.assertTrue;
 @Test
 public class LevelTest {
 
-  public void getMaximumScore_should_return_the_max_score() {
-
-    Level level = new Level(1);
-    level.addScoreForUser(1, new Score(230, Instant.now()));
-    level.addScoreForUser(1, new Score(100, Instant.now()));
-    level.addScoreForUser(2, new Score(120, Instant.now()));
-
-    assertThat(level.getMaximumScore2(), is(230));
-  }
-
   public void getUserScores_should_return_all_user_scores_saved_grouped_by_user() {
 
     Integer userId1 = 1;
@@ -66,6 +56,7 @@ public class LevelTest {
   }
 
   //This one works fine, just refactor and finish
+  @Test(enabled = false)
   public void getMaximumScorePerUser() {
 
     Integer userId1 = 1;
@@ -95,7 +86,6 @@ public class LevelTest {
 
     assertThat(level.getMaximumScorePerUser(), is(Arrays.asList()));
   }
-
 
 //  public void getSortedSet() {
 //
@@ -135,6 +125,7 @@ public class LevelTest {
 //    assertThat(new ArrayList<>(sortedSetOfScores), is(Arrays.asList(score400, score230)));
 //  }
 
+  //TODO: use it??
   private void addScoresToLevel(Level level, int numberOfUsersToCreate, int numberOfScoresPerUserToCreate) {
 
     Integer userId = 1;

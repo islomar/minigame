@@ -7,6 +7,9 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +30,8 @@ import static com.king.minigame.server.HttpRequestMethod.UNKNOWN;
  */
 public class MinigameHttpHandler implements HttpHandler {
 
+  private final static Logger LOG = LoggerFactory.getLogger(MinigameHttpHandler.class);
+
   private static final Pattern LOGIN_PATTERN = Pattern.compile("/(\\d*?)/login");
   private static final Pattern HIGH_SCORE_LIST_PATTERN = Pattern.compile("/(\\d*?)/highscorelist");
   private static final Pattern POST_USER_SCORE_TO_LEVEL_PATTERN = Pattern.compile("/(\\d*?)/score");
@@ -43,10 +48,11 @@ public class MinigameHttpHandler implements HttpHandler {
 
   public void handle(HttpExchange he) throws IOException {
 
-    Optional<Response> response = Optional.empty();//"Path: " + uri.getPath() + "\n";
+    Optional<Response> response = Optional.empty();
 
     try {
       URI uri = he.getRequestURI();
+      LOG.debug("Received request for " + uri);
 
       InputStream requestBody = he.getRequestBody();
 
@@ -54,7 +60,7 @@ public class MinigameHttpHandler implements HttpHandler {
 
       switch (requestMethod) {
         case GET:
-          response = handleGetRequest(he, uri);
+          response = handleGetRequest(uri);
           break;
         case POST:
           response = handlePostRequest(he, uri);
@@ -87,14 +93,14 @@ public class MinigameHttpHandler implements HttpHandler {
     os.close();
   }
 
-  private Optional<Response> handleGetRequest(HttpExchange he, URI uri)
+  private Optional<Response> handleGetRequest(URI uri)
       throws IOException {
 
     Optional<Response> response = Optional.empty();
     if (isLoginRequest(uri)) {
-      response = handleLoginRequestIfApplies(he, uri);
+      response = handleLoginRequestIfApplies(uri);
     } else if (isHighScoreListRequest(uri)) {
-      response = handleHighScoreListRequestIfApplies(he, uri);
+      response = handleHighScoreListRequestIfApplies(uri);
     }
     return response;
   }
@@ -147,7 +153,7 @@ public class MinigameHttpHandler implements HttpHandler {
     return method.name().equalsIgnoreCase(he.getRequestMethod());
   }
 
-  private Optional<Response> handleLoginRequestIfApplies(HttpExchange he, URI uri) throws IOException {
+  private Optional<Response> handleLoginRequestIfApplies(URI uri) throws IOException {
 
     String sesskionKey = "";
     int statusCode;
@@ -163,7 +169,7 @@ public class MinigameHttpHandler implements HttpHandler {
   }
 
 
-  private Optional<Response> handleHighScoreListRequestIfApplies(HttpExchange he, URI uri)
+  private Optional<Response> handleHighScoreListRequestIfApplies(URI uri)
       throws IOException {
 
     String highScoreListInCsvFormat = "";

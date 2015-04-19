@@ -6,11 +6,11 @@ import java.util.Map;
 /**
  *
  */
-public class ValueComparatorDesc implements Comparator {
+public class MapComparatorByValueDesc implements Comparator {
 
   Map map;
 
-  public ValueComparatorDesc(Map map) {
+  public MapComparatorByValueDesc(Map map) {
     this.map = map;
   }
 

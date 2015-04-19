@@ -1,7 +1,6 @@
 package com.king.minigame.session;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 /**
  *  Immutable class to store session cookies.

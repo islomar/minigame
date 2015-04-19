@@ -52,12 +52,6 @@ public class Level {
     }
   }
 
-  //TODO: probably delete it
-  public Integer getMaximumScore2() {
-    final Comparator<Map.Entry<Integer, Score>> sortLevelByScoreAscComparator = (p1, p2) -> Integer.compare(p1.getValue().getScoreValue(), p2.getValue().getScoreValue());
-    return userScores.entries().stream().max(sortLevelByScoreAscComparator).get().getValue().getScoreValue();
-  }
-
   public List<Score> getScoreListOrderedByValueDesc() {
 
     final Comparator<Map.Entry<Integer, Score>> sortLevelByScoreDescComparator = (p1, p2) -> Integer
@@ -65,10 +59,6 @@ public class Level {
     return userScores.entries().stream().sorted(sortLevelByScoreDescComparator).map(s -> s.getValue())
         .collect(Collectors.toList());
   }
-
-//  public Integer getMaximumScore() {
-//    return userScores.entries().stream().max(Comparator.comparing(item -> item.getValue().getScoreValue())).get().getValue().getScoreValue();
-//  }
 
   //WORKS PERFECT, but it should be in the Service
   public Map<Integer, Score> getMaximumScorePerUser() {
@@ -86,19 +76,11 @@ public class Level {
   private Map<Integer, Score> sortUserScores(Map<Integer, Score> unsortedUserScores) {
 
 
-    Map<Integer, Score> sortedUserScores = new TreeMap<>(new ValueComparatorDesc(unsortedUserScores));
+    Map<Integer, Score> sortedUserScores = new TreeMap<>(new MapComparatorByValueDesc(unsortedUserScores));
     sortedUserScores.putAll(unsortedUserScores);
 
-    //.collect(Collectors.toMap(Map.Entry::getKey, s -> s.getValue()));
     return sortedUserScores;
   }
-
-//  public SortedSet<Score> getSortedSet() {
-//
-//    SortedSet<Score> result = new TreeSet<>();
-//    userScores.asMap().forEach((k, v) -> result.add(getMaximumScore(v).get()));
-//    return result;
-//  }
 
   private Optional<Score> getMaximumScore(Collection<Score> v) {
 

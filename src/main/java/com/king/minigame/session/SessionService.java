@@ -37,8 +37,7 @@ public class SessionService {
 
   public boolean isSessionKeyValid(String sessionKey) {
 
-    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.findSessionCookieFromSessionKey(
-        sessionKey);
+    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.findSessionCookieFromSessionKey(sessionKey);
     return sessionCookie.isPresent();
   }
 

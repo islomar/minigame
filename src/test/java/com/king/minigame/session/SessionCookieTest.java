@@ -1,6 +1,5 @@
 package com.king.minigame.session;
 
-import org.testng.annotations.ExpectedExceptions;
 import org.testng.annotations.Test;
 
 import java.time.Instant;
