@@ -33,20 +33,32 @@ public class GameLevelService {
     this.clock = clock;
   }
 
+//  public void postUserScoreToLevel(String sessionKey, Integer levelId, Integer scoreValue) {
+//
+//    Optional<Integer> userId = sessionService.getUserIdForSessionKey(sessionKey);
+//    if (!userId.isPresent()) {
+//      throw new IllegalStateException("The sessionkey " + sessionKey + " is not active currently.");
+//    }
+//
+//    Level level = retrieveLevel(levelId);
+//    addUserScoreToLevel(userId.get(), scoreValue, level);
+//    levels.put(levelId, level);
+//  }
+
   public void postUserScoreToLevel(String sessionKey, Integer levelId, Integer scoreValue) {
 
-    Optional<Integer> userId = sessionService.getUserIdForSessionKey(sessionKey);
-    if (!userId.isPresent()) {
+    Optional<User> user = sessionService.findUserBySessionkey(sessionKey);
+    if (!user.isPresent()) {
       throw new IllegalStateException("The sessionkey " + sessionKey + " is not active currently.");
     }
 
     Level level = retrieveLevel(levelId);
-    addScoreToLevel(userId.get(), scoreValue, level);
-    levels.put(levelId, level);
+    addUserScoreToLevel(user.get().getUserId(), scoreValue, level);
+
   }
 
 
-  public Map<Integer, Score> getHighScoreListForLevel(Integer levelId) {
+  public Map<Integer, UserScore> getHighScoreListForLevel(Integer levelId) {
 
     Level level = levels.get(levelId);
     if (level == null) {
@@ -57,16 +69,16 @@ public class GameLevelService {
   }
 
 
-  private Map<Integer, Score> getMaximumScorePerUserForLevel(Level level) {
+  private Map<Integer, UserScore> getMaximumScorePerUserForLevel(Level level) {
 
-    ListMultimap<Integer, Score> allUserScores = level.getAllUserScores();
+    ListMultimap<Integer, UserScore> allUserScores = level.getAllUserScores();
 
-    Map<Integer, Score> unsortedUserScores = mapToMaximumScorePerUser(allUserScores);
+    Map<Integer, UserScore> unsortedUserScores = mapToMaximumScorePerUser(allUserScores);
     return sortUserScores(unsortedUserScores);
   }
 
 
-  private Map<Integer, Score> sortUserScores(Map<Integer, Score> unsortedUserScores) {
+  private Map<Integer, UserScore> sortUserScores(Map<Integer, UserScore> unsortedUserScores) {
 
     List list = new LinkedList(unsortedUserScores.entrySet());
     Collections.sort(list, new MapComparatorByValueDesc());
@@ -83,22 +95,22 @@ public class GameLevelService {
   }
 
 
-  private Map<Integer, Score> mapToMaximumScorePerUser(ListMultimap<Integer, Score> userScores) {
-    Map<Integer, Score> unsortedUserScores = new HashMap<>();
+  private Map<Integer, UserScore> mapToMaximumScorePerUser(ListMultimap<Integer, UserScore> userScores) {
+    Map<Integer, UserScore> unsortedUserScores = new HashMap<>();
     userScores.asMap().forEach((k, v) -> unsortedUserScores.put(k, getMaximumScore(v).get()));
     return unsortedUserScores;
   }
 
 
-  private Optional<Score> getMaximumScore(Collection<Score> v) {
+  private Optional<UserScore> getMaximumScore(Collection<UserScore> v) {
 
-    Optional<Score> max = v.stream().max(Comparator.comparing(item -> item.getScoreValue()));
+    Optional<UserScore> max = v.stream().max(Comparator.comparing(item -> item.getScoreValue()));
     return max;
   }
 
-  private void addScoreToLevel(Integer userId, Integer scoreValue, Level level) {
-    Score score = new Score(scoreValue, clock.instant());
-    level.addScoreForUser(userId, score);
+  private void addUserScoreToLevel(Integer userId, Integer scoreValue, Level level) {
+    UserScore userScore = new UserScore(userId, level.getLevelId(), scoreValue, clock.instant());
+    level.addScoreForUser2(userScore);
   }
 
   private Level retrieveLevel(Integer levelId) {
@@ -106,6 +118,7 @@ public class GameLevelService {
     Level level = levels.get(levelId);
     if (level == null) {
       level = new Level(levelId);
+      this.levels.put(levelId, level);
     }
     return level;
   }

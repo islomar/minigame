@@ -1,7 +1,7 @@
 package com.king.minigame.controller;
 
 import com.king.minigame.core.GameLevelService;
-import com.king.minigame.core.Score;
+import com.king.minigame.core.UserScore;
 import com.king.minigame.session.UserRepository;
 import com.king.minigame.session.UserSessionRepository;
 import com.king.minigame.session.SessionService;
@@ -24,7 +24,7 @@ public class GameLevelController {
 
   public String getHighScoreListForLevel(Integer levelId) {
 
-    Map<Integer, Score> highScoreList = gameLevelService.getHighScoreListForLevel(levelId);
+    Map<Integer, UserScore> highScoreList = gameLevelService.getHighScoreListForLevel(levelId);
 
     String highScoreListInCsvFormat = parseToCsv(highScoreList);
     return highScoreListInCsvFormat;
@@ -34,7 +34,7 @@ public class GameLevelController {
     gameLevelService.postUserScoreToLevel(sessionKey, levelId, scoreValue);
   }
 
-  private String parseToCsv(Map<Integer, Score> highScoreList) {
+  private String parseToCsv(Map<Integer, UserScore> highScoreList) {
     return highScoreList.entrySet().stream().map(s -> String.format("%d=%d", s.getKey(), s.getValue().getScoreValue())).collect(Collectors.joining(","));
   }
 }

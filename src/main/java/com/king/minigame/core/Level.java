@@ -4,18 +4,23 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  Class representing a level and all its associated user scores.
  */
 public class Level {
 
   private final Integer levelId;
-  private ListMultimap<Integer, Score> userScores;
+  private ListMultimap<Integer, UserScore> userScores;
+  private List<UserScore> userScoreList;
 
   public Level(final Integer levelId) {
 
     validateParameters(levelId);
     userScores = ArrayListMultimap.create();
+    userScoreList = new ArrayList<>();
     this.levelId = levelId;
   }
 
@@ -24,22 +29,27 @@ public class Level {
     return this.levelId;
   }
 
-  public ListMultimap<Integer, Score> getAllUserScores() {
+  public ListMultimap<Integer, UserScore> getAllUserScores() {
 
     return ImmutableListMultimap.copyOf(userScores);
   }
 
-  public void addScoreForUser(Integer userId, Score score) {
+  public void addScoreForUser(Integer userId, UserScore userScore) {
 
-    validateUserScoreParameters(userId, score);
+    validateUserScoreParameters(userId, userScore);
 
-    userScores.put(userId, score);
+    userScores.put(userId, userScore);
+  }
+
+  public void addScoreForUser2(UserScore userScore) {
+
+    userScoreList.add(userScore);
   }
 
 
-  private void validateUserScoreParameters(Integer userId, Score score) {
+  private void validateUserScoreParameters(Integer userId, UserScore userScore) {
 
-    if (userId == null || score == null) {
+    if (userId == null || userScore == null) {
       throw new IllegalArgumentException("null values are not allowed");
     }
   }

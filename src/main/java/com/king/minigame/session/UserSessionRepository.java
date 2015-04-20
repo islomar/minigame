@@ -38,7 +38,7 @@ public final class UserSessionRepository {
   }
 
 
-  public Optional<UserSession> findSessionCookieFromSessionKey(String sessionKey) {
+  public Optional<UserSession> findUserSessionBySessionKey(String sessionKey) {
 
     if (sessionKey == null) {
       return Optional.empty();
@@ -60,5 +60,17 @@ public final class UserSessionRepository {
 //      return Optional.empty();
 //    }
     return null;
+  }
+
+  public Optional<User> findUserBySessionKey(String sessionKey) {
+
+    Optional<Map.Entry<User, UserSession>> userIdFound = userSessionStore.entrySet().stream()
+        .filter(s -> s.getValue().getSessionKey().equalsIgnoreCase(sessionKey)).findFirst();
+
+    if (userIdFound.isPresent()) {
+      return Optional.of(userIdFound.get().getKey());
+    } else {
+      return Optional.empty();
+    }
   }
 }

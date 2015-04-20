@@ -40,12 +40,14 @@ public class SessionService {
     }
   }
 
+  //TODO: not used
   public boolean isSessionKeyValid(String sessionKey) {
 
-    Optional<UserSession> sessionCookie = this.userSessionRepository.findSessionCookieFromSessionKey(sessionKey);
+    Optional<UserSession> sessionCookie = this.userSessionRepository.findUserSessionBySessionKey(sessionKey);
     return sessionCookie.isPresent();
   }
 
+  //TODO: only used in tests
   public boolean hasUserValidSessionKey(Integer userId) {
 
     Optional<UserSession> sessionCookie = this.userSessionRepository.findUserSessionByUserId(userId);
@@ -54,6 +56,21 @@ public class SessionService {
 
   public Optional<Integer> getUserIdForSessionKey(String sessionKey) {
     return this.userSessionRepository.findUserIdFromSessionKey(sessionKey);
+  }
+
+  public Optional<User> findUserBySessionkey(String sessionKey) {
+
+    Optional<UserSession> userSession = this.userSessionRepository.findUserSessionBySessionKey(sessionKey);
+    if (userSession.isPresent() && isUserSessionStillActive(userSession.get())) {
+      return this.userSessionRepository.findUserBySessionKey(sessionKey);
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  public boolean isSessionkeyStillActive(String sessionKey) {
+    Optional<UserSession> userSession = this.userSessionRepository.findUserSessionBySessionKey(sessionKey);
+    return userSession.isPresent() && isUserSessionStillActive(userSession.get());
   }
 
 
@@ -81,7 +98,6 @@ public class SessionService {
     String sessionKey = UUID.randomUUID().toString();
     return new UserSession(sessionKey, clock.instant());
   }
-
 
 //  private Optional<String> getActiveSessionKeyForUser(Integer userId) {
 //
