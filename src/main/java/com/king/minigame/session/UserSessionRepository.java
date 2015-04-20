@@ -5,7 +5,6 @@ import com.king.minigame.core.model.User;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Class responsible for storing, finding and removing SessionCookies.
@@ -45,23 +44,10 @@ public class UserSessionRepository {
       return Optional.empty();
     }
     return Optional.of(userSessionStore.entrySet().stream()
-        .filter(s -> sessionKey.equalsIgnoreCase(s.getValue().getSessionKey()))
-        .findFirst().orElseThrow(IllegalStateException::new).getValue());
+                           .filter(s -> sessionKey.equalsIgnoreCase(s.getValue().getSessionKey()))
+                           .findFirst().orElseThrow(IllegalStateException::new).getValue());
   }
 
-
-  public Optional<Integer> findUserIdFromSessionKey(String sessionKey) {
-
-//    Optional<Map.Entry<Integer, UserSession>> userIdFound = userSessionStore.entrySet().stream()
-//        .filter(s -> s.getValue().getSessionKey().equalsIgnoreCase(sessionKey)).findFirst();
-//
-//    if (userIdFound.isPresent()) {
-//      return Optional.of(userIdFound.get().getKey());
-//    } else {
-//      return Optional.empty();
-//    }
-    return null;
-  }
 
   public Optional<User> findUserBySessionKey(String sessionKey) {
 

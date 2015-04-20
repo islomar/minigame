@@ -40,22 +40,11 @@ public class SessionService {
     }
   }
 
-  //TODO: not used
-  public boolean isSessionKeyValid(String sessionKey) {
-
-    Optional<UserSession> sessionCookie = this.userSessionRepository.findUserSessionBySessionKey(sessionKey);
-    return sessionCookie.isPresent();
-  }
-
   //TODO: only used in tests
   public boolean hasUserValidSessionKey(Integer userId) {
 
     Optional<UserSession> sessionCookie = this.userSessionRepository.findUserSessionByUserId(userId);
     return sessionCookie.isPresent() && isUserSessionStillActive(sessionCookie.get());
-  }
-
-  public Optional<Integer> getUserIdForSessionKey(String sessionKey) {
-    return this.userSessionRepository.findUserIdFromSessionKey(sessionKey);
   }
 
   public Optional<User> findUserBySessionkey(String sessionKey) {
@@ -66,11 +55,6 @@ public class SessionService {
     } else {
       return Optional.empty();
     }
-  }
-
-  public boolean isSessionkeyStillActive(String sessionKey) {
-    Optional<UserSession> userSession = this.userSessionRepository.findUserSessionBySessionKey(sessionKey);
-    return userSession.isPresent() && isUserSessionStillActive(userSession.get());
   }
 
 

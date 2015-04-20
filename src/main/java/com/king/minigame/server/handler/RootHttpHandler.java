@@ -43,7 +43,7 @@ public class RootHttpHandler implements HttpHandler {
     SessionService sessionService = new SessionService(Clock.systemUTC(), userSessionRepository, userRepository);
     GameLevelService gameLevelService = new GameLevelService(sessionService, Clock.systemUTC());
 
-    this.gameLevelController = new GameLevelController(gameLevelService, userSessionRepository, userRepository);
+    this.gameLevelController = new GameLevelController(gameLevelService);
     this.loginRequestHandler = new LoginRequestHandler(userSessionRepository, userRepository);
     this.highScoreListRequestHandler = new HighScoreListRequestHandler(gameLevelController);
     this.postUserScoreToLevelRequestHandler = new PostUserScoreToLevelRequestHandler(gameLevelController);

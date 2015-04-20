@@ -35,7 +35,7 @@ public class GameLevelControllerTest {
 
   @BeforeMethod
   public void setUp() {
-    gameLevelController = new GameLevelController(gameLevelService, userSessionRepository, userRepository);
+    gameLevelController = new GameLevelController(gameLevelService);
     initMocks(this);
   }
 

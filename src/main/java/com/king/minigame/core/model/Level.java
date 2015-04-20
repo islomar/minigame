@@ -10,13 +10,11 @@ import java.util.List;
 public class Level {
 
   private final Integer levelId;
- // private ListMultimap<Integer, UserScore> userScores;
   private List<UserScore> userScoreList;
 
   public Level(final Integer levelId) {
 
     validateParameters(levelId);
-    //userScores = ArrayListMultimap.create();
     userScoreList = new ArrayList<>();
     this.levelId = levelId;
   }
@@ -26,32 +24,21 @@ public class Level {
     return this.levelId;
   }
 
-//  public ListMultimap<Integer, UserScore> getAllUserScores() {
-//
-//    return ImmutableListMultimap.copyOf(userScores);
-//  }
-
-  public List<UserScore> getAllUserScores2() {
+  public List<UserScore> getAllUserScores() {
 
     return Collections.unmodifiableList(userScoreList);
   }
-//
-//  public void addScoreForUser(Integer userId, UserScore userScore) {
-//
-//    validateUserScoreParameters(userId, userScore);
-//
-//    userScores.put(userId, userScore);
-//  }
 
-  public void addScoreForUser2(UserScore userScore) {
+  public void addScoreForUser(UserScore userScore) {
 
+    validateUserScoreParameters(userScore);
     userScoreList.add(userScore);
   }
 
 
-  private void validateUserScoreParameters(Integer userId, UserScore userScore) {
+  private void validateUserScoreParameters(UserScore userScore) {
 
-    if (userId == null || userScore == null) {
+    if (userScore == null) {
       throw new IllegalArgumentException("null values are not allowed");
     }
   }

@@ -81,38 +81,22 @@ public class GameLevelServiceTest {
     Integer scoreValue = 300;
     List<UserScore> expectedHighScoreList = new LinkedList<>();
     //TODO: hacer tests con sesión inválida, ver que no funciona
-    when(sessionService.getUserIdForSessionKey("1")).thenReturn(Optional.of(1));
     when(sessionService.findUserBySessionkey("1")).thenReturn(Optional.of(new User(1)));
 
-    when(sessionService.getUserIdForSessionKey("2")).thenReturn(Optional.of(2));
     when(sessionService.findUserBySessionkey("2")).thenReturn(Optional.of(new User(2)));
-    when(sessionService.getUserIdForSessionKey("3")).thenReturn(Optional.of(3));
     when(sessionService.findUserBySessionkey("3")).thenReturn(Optional.of(new User(3)));
-    when(sessionService.getUserIdForSessionKey("4")).thenReturn(Optional.of(4));
     when(sessionService.findUserBySessionkey("4")).thenReturn(Optional.of(new User(4)));
-    when(sessionService.getUserIdForSessionKey("5")).thenReturn(Optional.of(5));
     when(sessionService.findUserBySessionkey("5")).thenReturn(Optional.of(new User(5)));
-    when(sessionService.getUserIdForSessionKey("6")).thenReturn(Optional.of(6));
     when(sessionService.findUserBySessionkey("6")).thenReturn(Optional.of(new User(6)));
-    when(sessionService.getUserIdForSessionKey("7")).thenReturn(Optional.of(7));
     when(sessionService.findUserBySessionkey("7")).thenReturn(Optional.of(new User(7)));
-    when(sessionService.getUserIdForSessionKey("8")).thenReturn(Optional.of(8));
     when(sessionService.findUserBySessionkey("8")).thenReturn(Optional.of(new User(8)));
-    when(sessionService.getUserIdForSessionKey("9")).thenReturn(Optional.of(9));
     when(sessionService.findUserBySessionkey("9")).thenReturn(Optional.of(new User(9)));
-    when(sessionService.getUserIdForSessionKey("10")).thenReturn(Optional.of(10));
     when(sessionService.findUserBySessionkey("10")).thenReturn(Optional.of(new User(10)));
-    when(sessionService.getUserIdForSessionKey("11")).thenReturn(Optional.of(11));
     when(sessionService.findUserBySessionkey("11")).thenReturn(Optional.of(new User(11)));
-    when(sessionService.getUserIdForSessionKey("12")).thenReturn(Optional.of(12));
     when(sessionService.findUserBySessionkey("12")).thenReturn(Optional.of(new User(12)));
-    when(sessionService.getUserIdForSessionKey("13")).thenReturn(Optional.of(13));
     when(sessionService.findUserBySessionkey("13")).thenReturn(Optional.of(new User(13)));
-    when(sessionService.getUserIdForSessionKey("14")).thenReturn(Optional.of(14));
     when(sessionService.findUserBySessionkey("14")).thenReturn(Optional.of(new User(14)));
-    when(sessionService.getUserIdForSessionKey("15")).thenReturn(Optional.of(15));
     when(sessionService.findUserBySessionkey("15")).thenReturn(Optional.of(new User(15)));
-    when(sessionService.getUserIdForSessionKey("16")).thenReturn(Optional.of(16));
     when(sessionService.findUserBySessionkey("16")).thenReturn(Optional.of(new User(16)));
 
     expectedHighScoreList.add(new UserScore(3, VALID_LEVEL_ID, 888, FIXED_INSTANT));
