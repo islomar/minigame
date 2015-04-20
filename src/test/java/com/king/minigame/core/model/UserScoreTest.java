@@ -1,4 +1,4 @@
-package com.king.minigame.core;
+package com.king.minigame.core.model;
 
 import com.king.minigame.core.model.UserScore;
 
@@ -20,7 +20,6 @@ public class UserScoreTest {
 
     Instant creationTime = Instant.now();
     UserScore userScore100 = new UserScore(VALID_USER_ID, VALID_LEVEL_ID, VALID_SCORE_VALUE, creationTime);
-
 
     assertThat(userScore100.getUserId(), is(VALID_USER_ID));
     assertThat(userScore100.getLevelId(), is(VALID_LEVEL_ID));

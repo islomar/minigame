@@ -5,7 +5,6 @@ import com.king.minigame.core.model.User;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -27,7 +26,6 @@ import static org.testng.Assert.assertTrue;
 public class SessionServiceIntegrationTest {
 
   private static final Integer USER_ID = 123456789;
-  private static final Integer ANOTHER_USER_ID = 1;
 
   @Mock
   private Clock clockMock;

@@ -5,7 +5,7 @@ import com.king.minigame.server.MinigameHTTPServer;
 import static com.king.minigame.utils.Logger.log;
 
 /**
- *  Executable class to launch the Minigame web server.
+ * Executable class to launch the Minigame web server.
  */
 public class MinigameApp {
 

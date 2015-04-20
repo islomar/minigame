@@ -20,11 +20,11 @@ public class UserRepository {
   }
 
   public void createUser(Integer userId) {
-     if (userAlreadyExists(userId)) {
-        return;
-     } else {
-       userStore.put(userId, new User(userId));
-     }
+    if (userAlreadyExists(userId)) {
+      return;
+    } else {
+      userStore.put(userId, new User(userId));
+    }
   }
 
   public Optional<User> findUserById(Integer userId) {

@@ -16,9 +16,6 @@ import java.util.regex.Pattern;
 
 import static com.king.minigame.utils.Logger.log;
 
-/**
- *
- */
 public class PostUserScoreToLevelRequestHandler {
 
   private static final Pattern POST_USER_SCORE_TO_LEVEL_PATTERN = Pattern.compile("/(\\d*?)/score");

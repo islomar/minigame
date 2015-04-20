@@ -27,7 +27,7 @@ public class UserRepositoryTest {
   }
 
   public void a_user_not_created_is_not_considered_to_exist() {
-     assertFalse(userRepository.userAlreadyExists(USER_ID));
+    assertFalse(userRepository.userAlreadyExists(USER_ID));
   }
 
   public void when_create_one_user_then_the_user_exists() {

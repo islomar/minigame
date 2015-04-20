@@ -3,7 +3,7 @@ package com.king.minigame.session;
 import java.time.Instant;
 
 /**
- *  Immutable class to store session cookies.
+ * Immutable class to store session cookies.
  */
 public final class UserSession {
 

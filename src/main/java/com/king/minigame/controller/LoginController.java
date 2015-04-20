@@ -6,9 +6,7 @@ import com.king.minigame.session.SessionService;
 
 import java.time.Clock;
 
-/**
- *
- */
+
 public class LoginController {
 
   private SessionService sessionService;

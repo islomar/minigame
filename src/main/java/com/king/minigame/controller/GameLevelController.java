@@ -6,9 +6,6 @@ import com.king.minigame.core.model.UserScore;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- *
- */
 public class GameLevelController {
 
   private GameLevelService gameLevelService;

@@ -14,9 +14,6 @@ import java.util.regex.Pattern;
 
 import static com.king.minigame.utils.Logger.log;
 
-/**
- *
- */
 public class LoginRequestHandler {
 
   private static final Pattern LOGIN_PATTERN = Pattern.compile("/(\\d*?)/login");

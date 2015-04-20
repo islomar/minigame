@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- *  Class representing a level and all its associated user scores.
+ * Class representing a level and all its associated user scores.
  */
 public class Level {
 

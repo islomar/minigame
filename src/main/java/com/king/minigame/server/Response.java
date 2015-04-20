@@ -1,7 +1,7 @@
 package com.king.minigame.server;
 
 /**
- *
+ *  Class which encapsulates the information returned to the RootHttpHandler for further processing.
  */
 public class Response {
 

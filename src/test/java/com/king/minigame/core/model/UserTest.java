@@ -1,4 +1,4 @@
-package com.king.minigame.core;
+package com.king.minigame.core.model;
 
 import com.king.minigame.core.model.User;
 

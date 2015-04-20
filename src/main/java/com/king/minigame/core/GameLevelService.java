@@ -16,11 +16,11 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Class responsible for actions related to a Level, like posting scores or retrieving the highest scores.
  */
 public class GameLevelService {
 
-  private static final int MAX_NUMBER_OF_SCORES_FOR_HIGHLIST = 15;
+  public static final int MAX_NUMBER_OF_SCORES_FOR_HIGHLIST = 15;
   private static final Comparator<UserScore> SCORE_COMPARATOR = Comparator.comparing(UserScore::getScoreValue);
 
   private Map<Integer, Level> levels;
@@ -47,7 +47,11 @@ public class GameLevelService {
 
   }
 
-
+  /**
+   * Currently limited to {@link com.king.minigame.core.GameLevelService#MAX_NUMBER_OF_SCORES_FOR_HIGHLIST}.
+   * @param levelId
+   * @return - sorted list of {@link com.king.minigame.core.model.UserScore}
+   */
   public List<UserScore> getHighScoreListForLevel(Integer levelId) {
 
     Level level = levels.get(levelId);
@@ -68,11 +72,11 @@ public class GameLevelService {
         .collect(Collectors.groupingBy(UserScore::getUserId, Collectors.reducing(BinaryOperator.maxBy(SCORE_COMPARATOR))));
 
     List<UserScore> highUserScoreList = mapUserIdToMaxUserScore.entrySet()
-            .stream()
-            .map(s -> s.getValue().get())
-            .sorted()
-            .limit(MAX_NUMBER_OF_SCORES_FOR_HIGHLIST)
-            .collect(Collectors.toList());
+        .stream()
+        .map(s -> s.getValue().get())
+        .sorted()
+        .limit(MAX_NUMBER_OF_SCORES_FOR_HIGHLIST)
+        .collect(Collectors.toList());
 
     return highUserScoreList;
   }
