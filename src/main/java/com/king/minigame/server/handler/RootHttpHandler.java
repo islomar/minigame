@@ -24,7 +24,7 @@ import static com.king.minigame.server.handler.PostUserScoreToLevelRequestHandle
 import static com.king.minigame.utils.Logger.log;
 
 
-public class MinigameHttpHandler implements HttpHandler {
+public class RootHttpHandler implements HttpHandler {
 
   private final GameLevelController gameLevelController;
   private final LoginRequestHandler loginRequestHandler;
@@ -32,7 +32,7 @@ public class MinigameHttpHandler implements HttpHandler {
   private final PostUserScoreToLevelRequestHandler postUserScoreToLevelRequestHandler;
 
 
-  public MinigameHttpHandler() {
+  public RootHttpHandler() {
     SessionCookieRepository sessionCookieRepository = new SessionCookieRepository();
 
     this.gameLevelController = new GameLevelController(sessionCookieRepository);

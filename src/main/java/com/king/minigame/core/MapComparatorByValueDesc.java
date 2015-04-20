@@ -8,15 +8,7 @@ import java.util.Map;
  */
 public class MapComparatorByValueDesc implements Comparator {
 
-  Map map;
-
-  public MapComparatorByValueDesc(Map map) {
-    this.map = map;
-  }
-
-  public int compare(Object keyA, Object keyB) {
-    Comparable valueA = (Comparable) map.get(keyA);
-    Comparable valueB = (Comparable) map.get(keyB);
-    return valueA.compareTo(valueB);
+  public int compare(Object entry1, Object entry2) {
+    return ((Comparable) ((Map.Entry) (entry1)).getValue()).compareTo(((Map.Entry) (entry2)).getValue());
   }
 }

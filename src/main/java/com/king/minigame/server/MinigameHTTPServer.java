@@ -1,6 +1,6 @@
 package com.king.minigame.server;
 
-import com.king.minigame.server.handler.MinigameHttpHandler;
+import com.king.minigame.server.handler.RootHttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.net.InetSocketAddress;
@@ -18,7 +18,7 @@ public class MinigameHTTPServer {
   public void startUp() {
     try {
       HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
-      server.createContext("/", new MinigameHttpHandler());
+      server.createContext("/", new RootHttpHandler());
       server.setExecutor(Executors.newCachedThreadPool());
 
       log("Starting server in port " + PORT);

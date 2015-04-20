@@ -18,7 +18,7 @@ public class GameLevelController {
 
   public GameLevelController(SessionCookieRepository sessionCookieRespository) {
     SessionService sessionService = new SessionService(Clock.systemUTC(), sessionCookieRespository);
-    this.gameLevelService = new GameLevelService(sessionService);
+    this.gameLevelService = new GameLevelService(sessionService, Clock.systemUTC());
   }
 
   public String getHighScoreListForLevel(Integer levelId) {

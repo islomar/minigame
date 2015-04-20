@@ -2,13 +2,11 @@ package com.king.minigame.core;
 
 import com.google.common.collect.ListMultimap;
 
-import org.hamcrest.collection.IsCollectionWithSize;
 import org.testng.annotations.Test;
 
 import java.time.Instant;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
