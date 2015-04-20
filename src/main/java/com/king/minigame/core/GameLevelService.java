@@ -48,18 +48,18 @@ public class GameLevelService {
   }
 
 
-  public List<UserScore> getHighScoreListForLevel2(Integer levelId) {
+  public List<UserScore> getHighScoreListForLevel(Integer levelId) {
 
     Level level = levels.get(levelId);
     if (level == null) {
       return new ArrayList<>();
     } else {
-      return getMaximumScorePerUserForLevel2(level);
+      return getMaximumScorePerUserForLevel(level);
     }
   }
 
 
-  private List<UserScore> getMaximumScorePerUserForLevel2(Level level) {
+  private List<UserScore> getMaximumScorePerUserForLevel(Level level) {
 
     List<UserScore> allUserScores = level.getAllUserScores();
 

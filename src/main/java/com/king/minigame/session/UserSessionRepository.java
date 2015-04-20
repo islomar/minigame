@@ -25,12 +25,6 @@ public class UserSessionRepository {
   }
 
 
-  public void removeAllSessions() {
-
-    userSessionStore.clear();
-  }
-
-
   public Optional<UserSession> findUserSessionByUserId(Integer userId) {
 
     User user = new User(userId);

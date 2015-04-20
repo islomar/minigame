@@ -19,7 +19,7 @@ public class GameLevelController {
 
   public String getHighScoreListForLevel(Integer levelId) {
 
-    List<UserScore> highScoreList = gameLevelService.getHighScoreListForLevel2(levelId);
+    List<UserScore> highScoreList = gameLevelService.getHighScoreListForLevel(levelId);
 
     String highScoreListInCsvFormat = parseToCsv(highScoreList);
     return highScoreListInCsvFormat;

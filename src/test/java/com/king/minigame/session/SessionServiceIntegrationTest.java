@@ -1,6 +1,8 @@
 package com.king.minigame.session;
 
 
+import com.king.minigame.core.model.User;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeClass;
@@ -10,6 +12,7 @@ import org.testng.annotations.Test;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -21,7 +24,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 @Test
-public class SessionServiceTest {
+public class SessionServiceIntegrationTest {
 
   private static final Integer USER_ID = 123456789;
   private static final Integer ANOTHER_USER_ID = 1;
@@ -32,17 +35,11 @@ public class SessionServiceTest {
   @InjectMocks
   private SessionService sessionService;
 
-  @BeforeClass
-  public void setUpBeforeClass() {
-
-    sessionService = new SessionService(clockMock, new UserSessionRepository(), new UserRepository());
-    initMocks(this);
-  }
-
   @BeforeMethod
   public void setUpBeforeMethod() {
 
-    sessionService.removeAllSessions();
+    sessionService = new SessionService(clockMock, new UserSessionRepository(), new UserRepository());
+    initMocks(this);
   }
 
   public void should_return_valid_session_key_for_a_user_who_just_logged_in() {
@@ -76,38 +73,41 @@ public class SessionServiceTest {
     assertThat(oldSessionKey, is(not(newSessionKey)));
   }
 
+  public void a_user_who_logged_in_more_than_10_minutes_ago_should_not_be_found() {
 
-  public void a_user_who_has_not_logged_in_should_not_be_considered_active() {
+    setTimeMinutesAgo(11);
+    String sessionKey = sessionService.login(USER_ID);
 
     setTimeToNow();
-    String sessionKey = sessionService.login(USER_ID);
-    boolean isUserActive = sessionService.hasUserValidSessionKey(ANOTHER_USER_ID);
+    Optional<User> user = sessionService.findUserBySessionkey(sessionKey);
 
-    assertFalse(isUserActive);
+    assertFalse(user.isPresent());
   }
 
+  public void no_user_should_be_found_for_a_session_not_belonging_to_anyone() {
 
-  public void a_user_who_logged_in_9_minutes_ago_should_be_considered_an_active_user() {
+    setTimeToNow();
+    Optional<User> user = sessionService.findUserBySessionkey(null);
+
+    assertFalse(user.isPresent());
+  }
+
+  @Test(expectedExceptions = IllegalStateException.class)
+  public void throw_IllegalStateException_if_no_user_is_found_for_the_sessionkey() {
+
+    setTimeToNow();
+    Optional<User> user = sessionService.findUserBySessionkey("NON_EXISTING_SESSION_KEY");
+  }
+
+  public void a_user_who_logged_in_9_minutes_ago_should_be_found() {
 
     setTimeMinutesAgo(9);
     String sessionKey = sessionService.login(USER_ID);
 
     setTimeToNow();
-    boolean isUserActive = sessionService.hasUserValidSessionKey(USER_ID);
+    Optional<User> user = sessionService.findUserBySessionkey(sessionKey);
 
-    assertTrue(isUserActive);
-  }
-
-  public void a_user_who_logged_in_more_than_10_minutes_ago_should_not_be_considered_active() {
-
-    setTimeMinutesAgo(11);
-
-    String sessionKey = sessionService.login(USER_ID);
-
-    setTimeToNow();
-    boolean isUserActive = sessionService.hasUserValidSessionKey(USER_ID);
-
-    assertFalse(isUserActive);
+    assertTrue(user.isPresent());
   }
 
 

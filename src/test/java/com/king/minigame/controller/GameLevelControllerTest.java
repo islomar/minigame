@@ -51,7 +51,7 @@ public class GameLevelControllerTest {
     //GIVEN
     String expectedHighScoreListInCsvFormat = "6=800,5=800,2=200,3=100";
     List<UserScore> expectedUserScoreList = generateExpectedUserScoreList();
-    when(gameLevelService.getHighScoreListForLevel2(LEVEL_ID)).thenReturn(expectedUserScoreList);
+    when(gameLevelService.getHighScoreListForLevel(LEVEL_ID)).thenReturn(expectedUserScoreList);
 
     //WHEN
     String highScoreListForLevel = gameLevelController.getHighScoreListForLevel(LEVEL_ID);

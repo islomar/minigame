@@ -40,12 +40,6 @@ public class SessionService {
     }
   }
 
-  //TODO: only used in tests
-  public boolean hasUserValidSessionKey(Integer userId) {
-
-    Optional<UserSession> sessionCookie = this.userSessionRepository.findUserSessionByUserId(userId);
-    return sessionCookie.isPresent() && isUserSessionStillActive(sessionCookie.get());
-  }
 
   public Optional<User> findUserBySessionkey(String sessionKey) {
 
@@ -57,11 +51,6 @@ public class SessionService {
     }
   }
 
-
-  public void removeAllSessions() {
-
-    this.userSessionRepository.removeAllSessions();
-  }
 
   private void saveUserSession(Integer userId, UserSession userSession) {
 
@@ -83,15 +72,6 @@ public class SessionService {
     return new UserSession(sessionKey, clock.instant());
   }
 
-//  private Optional<String> getActiveSessionKeyForUser(Integer userId) {
-//
-//    Optional<UserSession> sessionCookie = this.userSessionRepository.findUserSessionByUserId(userId);
-//    if (sessionCookie.isPresent() && isUserSessionStillActive(sessionCookie.get())) {
-//      return Optional.of(sessionCookie.get().getSessionKey());
-//    } else {
-//      return Optional.empty();
-//    }
-//  }
 
   private Optional<String> getActiveSessionKeyForUser(Integer userId) {
 

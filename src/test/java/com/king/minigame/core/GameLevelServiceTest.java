@@ -28,6 +28,7 @@ public class GameLevelServiceTest {
   private static final Integer VALID_USER_ID = 1;
   private static final Integer VALID_LEVEL_ID = 123;
   private static final Integer VALID_SCORE_VALUE = 100;
+  private static final String SESSION_KEY = "cfa400a5-b7b4-460d-b4d6-374eb17053f1";
   private static final Instant FIXED_INSTANT = Instant.parse("2015-01-01T10:15:30.00Z");
 
   @Mock
@@ -50,14 +51,19 @@ public class GameLevelServiceTest {
 
   public void should_return_empty_map_if_level_has_no_scores() {
 
+    assertTrue(gameLevelService.getHighScoreListForLevel(VALID_LEVEL_ID).isEmpty());
+  }
+
+  public void should_return_empty_map_if_level_has_no_scores2() {
+
     Integer userId = 1;
     Integer levelId = 123;
     Integer scoreValue = 300;
 
     //TODO: hacer tests con sesión inválida, ver que no funciona
-    when(sessionService.hasUserValidSessionKey(anyInt())).thenReturn(true);
+    when(sessionService.findUserBySessionkey(SESSION_KEY)).thenReturn(Optional.of(new User(1)));
 
-    assertTrue(gameLevelService.getHighScoreListForLevel2(levelId).isEmpty());
+    gameLevelService.postUserScoreToLevel(SESSION_KEY, levelId, 300);
   }
 
   public void given_more_than_15_users_post_scores_then_getHighScoreListForLevel_returns_only_15_top_scores() {
@@ -68,7 +74,7 @@ public class GameLevelServiceTest {
     List<UserScore> expectedHighScoreList = givenMoreThan15UsersWhoPostScores(levelId);
 
     //WHEN
-    List<UserScore> highScoreList = gameLevelService.getHighScoreListForLevel2(levelId);
+    List<UserScore> highScoreList = gameLevelService.getHighScoreListForLevel(levelId);
 
     //THEN
     assertThat(highScoreList.size(), is(15));
