@@ -73,7 +73,7 @@ public class PostUserScoreToLevelRequestHandler {
     InputStream is = he.getRequestBody();
     byte[] buf = new byte[1000];
     int len = is.read(buf);
-    String bodyString = new String(buf, 0, len);
+    String bodyString = new String(buf, 0, len, "UTF-8");
     return Integer.valueOf(bodyString);
   }
 

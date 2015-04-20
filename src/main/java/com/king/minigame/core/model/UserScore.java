@@ -3,9 +3,9 @@ package com.king.minigame.core.model;
 import java.time.Instant;
 
 /**
- *  Class responsible for storing a score value and the moment when it happened.
+ * Class responsible for storing a score value and the moment when it happened.
  */
-public final class UserScore implements Comparable{
+public final class UserScore implements Comparable {
 
   private final Integer userId;
   private final Integer scoreValue;
@@ -91,7 +91,7 @@ public final class UserScore implements Comparable{
 
   @Override
   public int compareTo(Object o) {
-    UserScore otherUserScore = (UserScore)o;
+    UserScore otherUserScore = (UserScore) o;
     return otherUserScore.getScoreValue() - this.getScoreValue();
   }
 }
