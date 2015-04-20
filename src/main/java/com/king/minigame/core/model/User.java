@@ -1,6 +1,4 @@
-package com.king.minigame.core;
-
-import com.king.minigame.session.UserSession;
+package com.king.minigame.core.model;
 
 /**
  *

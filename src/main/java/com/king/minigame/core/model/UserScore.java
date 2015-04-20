@@ -1,4 +1,4 @@
-package com.king.minigame.core;
+package com.king.minigame.core.model;
 
 import java.time.Instant;
 

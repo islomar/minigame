@@ -1,10 +1,7 @@
-package com.king.minigame.core;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ListMultimap;
+package com.king.minigame.core.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,13 +10,13 @@ import java.util.List;
 public class Level {
 
   private final Integer levelId;
-  private ListMultimap<Integer, UserScore> userScores;
+ // private ListMultimap<Integer, UserScore> userScores;
   private List<UserScore> userScoreList;
 
   public Level(final Integer levelId) {
 
     validateParameters(levelId);
-    userScores = ArrayListMultimap.create();
+    //userScores = ArrayListMultimap.create();
     userScoreList = new ArrayList<>();
     this.levelId = levelId;
   }
@@ -29,17 +26,22 @@ public class Level {
     return this.levelId;
   }
 
-  public ListMultimap<Integer, UserScore> getAllUserScores() {
+//  public ListMultimap<Integer, UserScore> getAllUserScores() {
+//
+//    return ImmutableListMultimap.copyOf(userScores);
+//  }
 
-    return ImmutableListMultimap.copyOf(userScores);
+  public List<UserScore> getAllUserScores2() {
+
+    return Collections.unmodifiableList(userScoreList);
   }
-
-  public void addScoreForUser(Integer userId, UserScore userScore) {
-
-    validateUserScoreParameters(userId, userScore);
-
-    userScores.put(userId, userScore);
-  }
+//
+//  public void addScoreForUser(Integer userId, UserScore userScore) {
+//
+//    validateUserScoreParameters(userId, userScore);
+//
+//    userScores.put(userId, userScore);
+//  }
 
   public void addScoreForUser2(UserScore userScore) {
 

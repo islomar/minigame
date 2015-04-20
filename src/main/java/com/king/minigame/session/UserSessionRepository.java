@@ -1,15 +1,16 @@
 package com.king.minigame.session;
 
-import com.king.minigame.core.User;
+import com.king.minigame.core.model.User;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Class responsible for storing, finding and removing SessionCookies.
  */
-public final class UserSessionRepository {
+public class UserSessionRepository {
 
   private Map<User, UserSession> userSessionStore;
 
@@ -43,9 +44,9 @@ public final class UserSessionRepository {
     if (sessionKey == null) {
       return Optional.empty();
     }
-    return Optional.ofNullable(userSessionStore.entrySet().stream()
-                                   .filter(s -> sessionKey.equalsIgnoreCase(s.getValue().getSessionKey()))
-                                   .findFirst().get().getValue());
+    return Optional.of(userSessionStore.entrySet().stream()
+        .filter(s -> sessionKey.equalsIgnoreCase(s.getValue().getSessionKey()))
+        .findFirst().orElseThrow(IllegalStateException::new).getValue());
   }
 
 

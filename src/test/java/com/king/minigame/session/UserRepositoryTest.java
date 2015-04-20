@@ -1,6 +1,6 @@
 package com.king.minigame.session;
 
-import com.king.minigame.core.User;
+import com.king.minigame.core.model.User;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

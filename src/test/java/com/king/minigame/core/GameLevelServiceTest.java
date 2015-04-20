@@ -1,5 +1,7 @@
 package com.king.minigame.core;
 
+import com.king.minigame.core.model.User;
+import com.king.minigame.core.model.UserScore;
 import com.king.minigame.session.SessionService;
 
 import org.mockito.InjectMocks;
@@ -9,8 +11,8 @@ import org.testng.annotations.Test;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,30 +57,29 @@ public class GameLevelServiceTest {
     //TODO: hacer tests con sesión inválida, ver que no funciona
     when(sessionService.hasUserValidSessionKey(anyInt())).thenReturn(true);
 
-    assertTrue(gameLevelService.getHighScoreListForLevel(levelId).isEmpty());
+    assertTrue(gameLevelService.getHighScoreListForLevel2(levelId).isEmpty());
   }
 
-  @Test(enabled = false)
   public void given_more_than_15_users_post_scores_then_getHighScoreListForLevel_returns_only_15_top_scores() {
 
     Integer levelId = 123;
 
     //GIVEN
-    Map<Integer, UserScore> expectedUserScoreMap = givenMoreThan15UsersWhoPostScores(levelId);
+    List<UserScore> expectedHighScoreList = givenMoreThan15UsersWhoPostScores(levelId);
 
     //WHEN
-    Map<Integer, UserScore> highScoreList = gameLevelService.getHighScoreListForLevel(levelId);
+    List<UserScore> highScoreList = gameLevelService.getHighScoreListForLevel2(levelId);
 
     //THEN
     assertThat(highScoreList.size(), is(15));
-    assertThat(highScoreList, is(expectedUserScoreMap));
+    assertThat(highScoreList, is(expectedHighScoreList));
   }
 
   //TODO: refactor, please!!!
-  private Map<Integer, UserScore> givenMoreThan15UsersWhoPostScores(Integer levelId) {
+  private List<UserScore> givenMoreThan15UsersWhoPostScores(Integer levelId) {
     Integer anotherLevelId = 456;
     Integer scoreValue = 300;
-    Map<Integer, UserScore> expectedUserScoreMap = new LinkedHashMap<>();
+    List<UserScore> expectedHighScoreList = new LinkedList<>();
     //TODO: hacer tests con sesión inválida, ver que no funciona
     when(sessionService.getUserIdForSessionKey("1")).thenReturn(Optional.of(1));
     when(sessionService.findUserBySessionkey("1")).thenReturn(Optional.of(new User(1)));
@@ -114,21 +115,21 @@ public class GameLevelServiceTest {
     when(sessionService.getUserIdForSessionKey("16")).thenReturn(Optional.of(16));
     when(sessionService.findUserBySessionkey("16")).thenReturn(Optional.of(new User(16)));
 
-    expectedUserScoreMap.put(3, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 888, FIXED_INSTANT));
-    expectedUserScoreMap.put(7, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 888, FIXED_INSTANT));
-    expectedUserScoreMap.put(13, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 888, FIXED_INSTANT));
-    expectedUserScoreMap.put(14, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 888, FIXED_INSTANT));
-    expectedUserScoreMap.put(15, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 888, FIXED_INSTANT));
-    expectedUserScoreMap.put(16, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 888, FIXED_INSTANT));
-    expectedUserScoreMap.put(10, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 310, FIXED_INSTANT));
-    expectedUserScoreMap.put(1, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 300, FIXED_INSTANT));
-    expectedUserScoreMap.put(4, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 300, FIXED_INSTANT));
-    expectedUserScoreMap.put(5, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 120, FIXED_INSTANT));
-    expectedUserScoreMap.put(2, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 100, FIXED_INSTANT));
-    expectedUserScoreMap.put(6, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 99, FIXED_INSTANT));
-    expectedUserScoreMap.put(8, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 77, FIXED_INSTANT));
-    expectedUserScoreMap.put(11, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 66, FIXED_INSTANT));
-    expectedUserScoreMap.put(12, new UserScore(VALID_USER_ID, VALID_LEVEL_ID, 25, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(3, VALID_LEVEL_ID, 888, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(7, VALID_LEVEL_ID, 888, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(13, VALID_LEVEL_ID, 888, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(14, VALID_LEVEL_ID, 888, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(15, VALID_LEVEL_ID, 888, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(16, VALID_LEVEL_ID, 888, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(10, VALID_LEVEL_ID, 310, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(1, VALID_LEVEL_ID, 300, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(4, VALID_LEVEL_ID, 300, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(5, VALID_LEVEL_ID, 120, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(2, VALID_LEVEL_ID, 100, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(6, VALID_LEVEL_ID, 99, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(8, VALID_LEVEL_ID, 77, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(11, VALID_LEVEL_ID, 66, FIXED_INSTANT));
+    expectedHighScoreList.add(new UserScore(12, VALID_LEVEL_ID, 25, FIXED_INSTANT));
 
     gameLevelService.postUserScoreToLevel("1", levelId, 300);
     gameLevelService.postUserScoreToLevel("1", levelId, 200);
@@ -153,7 +154,7 @@ public class GameLevelServiceTest {
     gameLevelService.postUserScoreToLevel("14", levelId, 888);
     gameLevelService.postUserScoreToLevel("15", levelId, 888);
     gameLevelService.postUserScoreToLevel("16", levelId, 888);
-    return expectedUserScoreMap;
+    return expectedHighScoreList;
   }
 
 }

@@ -1,5 +1,7 @@
 package com.king.minigame.core;
 
+import com.king.minigame.core.model.UserScore;
+
 import org.testng.annotations.Test;
 
 import java.time.Instant;

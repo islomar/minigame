@@ -1,5 +1,7 @@
 package com.king.minigame.core;
 
+import com.king.minigame.core.model.User;
+
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

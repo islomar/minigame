@@ -1,8 +1,10 @@
 package com.king.minigame.server.handler;
 
 import com.king.minigame.controller.GameLevelController;
+import com.king.minigame.core.GameLevelService;
 import com.king.minigame.server.HttpRequestMethod;
 import com.king.minigame.server.Response;
+import com.king.minigame.session.SessionService;
 import com.king.minigame.session.UserRepository;
 import com.king.minigame.session.UserSessionRepository;
 import com.sun.net.httpserver.Headers;
@@ -14,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.time.Clock;
 import java.util.Optional;
 
 import static com.king.minigame.server.HttpRequestMethod.GET;
@@ -34,10 +37,13 @@ public class RootHttpHandler implements HttpHandler {
 
 
   public RootHttpHandler() {
+
     UserSessionRepository userSessionRepository = new UserSessionRepository();
     UserRepository userRepository = new UserRepository();
+    SessionService sessionService = new SessionService(Clock.systemUTC(), userSessionRepository, userRepository);
+    GameLevelService gameLevelService = new GameLevelService(sessionService, Clock.systemUTC());
 
-    this.gameLevelController = new GameLevelController(userSessionRepository, userRepository);
+    this.gameLevelController = new GameLevelController(gameLevelService, userSessionRepository, userRepository);
     this.loginRequestHandler = new LoginRequestHandler(userSessionRepository, userRepository);
     this.highScoreListRequestHandler = new HighScoreListRequestHandler(gameLevelController);
     this.postUserScoreToLevelRequestHandler = new PostUserScoreToLevelRequestHandler(gameLevelController);
