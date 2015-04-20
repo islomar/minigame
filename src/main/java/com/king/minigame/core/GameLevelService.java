@@ -8,10 +8,10 @@ import com.king.minigame.session.SessionService;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,7 @@ public class GameLevelService {
 
 
   public GameLevelService(SessionService sessionService, Clock clock) {
-    levels = new HashMap<>();
+    levels = new ConcurrentHashMap<>();
     this.sessionService = sessionService;
     this.clock = clock;
   }
@@ -49,7 +49,7 @@ public class GameLevelService {
 
   /**
    * Currently limited to {@link com.king.minigame.core.GameLevelService#MAX_NUMBER_OF_SCORES_FOR_HIGHLIST}.
-   * @param levelId
+   *
    * @return - sorted list of {@link com.king.minigame.core.model.UserScore}
    */
   public List<UserScore> getHighScoreListForLevel(Integer levelId) {
@@ -68,11 +68,11 @@ public class GameLevelService {
     List<UserScore> allUserScores = level.getAllUserScores();
 
     Map<Integer, Optional<UserScore>> mapUserIdToMaxUserScore = allUserScores
-        .stream()
+        .parallelStream()
         .collect(Collectors.groupingBy(UserScore::getUserId, Collectors.reducing(BinaryOperator.maxBy(SCORE_COMPARATOR))));
 
     List<UserScore> highUserScoreList = mapUserIdToMaxUserScore.entrySet()
-        .stream()
+        .parallelStream()
         .map(s -> s.getValue().get())
         .sorted()
         .limit(MAX_NUMBER_OF_SCORES_FOR_HIGHLIST)

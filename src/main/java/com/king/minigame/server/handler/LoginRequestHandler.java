@@ -17,10 +17,10 @@ import static com.king.minigame.utils.Logger.log;
 public class LoginRequestHandler {
 
   private static final Pattern LOGIN_PATTERN = Pattern.compile("/(\\d*?)/login");
-  private final LoginController loginController;
+  private LoginController loginController;
 
-  public LoginRequestHandler(UserSessionRepository userSessionRepository, UserRepository userRepository) {
-    this.loginController = new LoginController(userSessionRepository, userRepository);
+  public LoginRequestHandler(LoginController loginController) {
+    this.loginController = loginController;
   }
 
   public Optional<Response> handleLoginRequestIfApplies(URI uri) throws IOException {

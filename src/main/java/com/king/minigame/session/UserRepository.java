@@ -2,9 +2,10 @@ package com.king.minigame.session;
 
 import com.king.minigame.core.model.User;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -16,7 +17,7 @@ public class UserRepository {
 
   public UserRepository() {
 
-    this.userStore = new HashMap();
+    this.userStore = new ConcurrentHashMap<>();
   }
 
   public void createUser(Integer userId) {

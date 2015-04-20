@@ -1,6 +1,7 @@
 package com.king.minigame.server.handler;
 
 import com.king.minigame.controller.GameLevelController;
+import com.king.minigame.controller.LoginController;
 import com.king.minigame.core.GameLevelService;
 import com.king.minigame.server.HttpRequestMethod;
 import com.king.minigame.server.Response;
@@ -31,6 +32,7 @@ import static com.king.minigame.utils.Logger.log;
 public class RootHttpHandler implements HttpHandler {
 
   private final GameLevelController gameLevelController;
+  private final LoginController loginController;
   private final LoginRequestHandler loginRequestHandler;
   private final HighScoreListRequestHandler highScoreListRequestHandler;
   private final PostUserScoreToLevelRequestHandler postUserScoreToLevelRequestHandler;
@@ -44,7 +46,8 @@ public class RootHttpHandler implements HttpHandler {
     GameLevelService gameLevelService = new GameLevelService(sessionService, Clock.systemUTC());
 
     this.gameLevelController = new GameLevelController(gameLevelService);
-    this.loginRequestHandler = new LoginRequestHandler(userSessionRepository, userRepository);
+    this.loginController = new LoginController(userSessionRepository, userRepository);
+    this.loginRequestHandler = new LoginRequestHandler(loginController);
     this.highScoreListRequestHandler = new HighScoreListRequestHandler(gameLevelController);
     this.postUserScoreToLevelRequestHandler = new PostUserScoreToLevelRequestHandler(gameLevelController);
   }

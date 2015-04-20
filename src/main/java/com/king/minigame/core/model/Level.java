@@ -26,7 +26,7 @@ public class Level {
 
   public List<UserScore> getAllUserScores() {
 
-    return Collections.unmodifiableList(userScoreList);
+    return Collections.synchronizedList(userScoreList);
   }
 
   public void addScoreForUser(UserScore userScore) {

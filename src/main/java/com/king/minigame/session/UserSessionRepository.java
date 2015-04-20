@@ -2,9 +2,9 @@ package com.king.minigame.session;
 
 import com.king.minigame.core.model.User;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class responsible for storing, finding and removing SessionCookies.
@@ -16,7 +16,7 @@ public class UserSessionRepository {
 
   public UserSessionRepository() {
 
-    this.userSessionStore = new HashMap<>();
+    this.userSessionStore = new ConcurrentHashMap<>();
   }
 
   public void saveUserSession(User user, UserSession userSession) {
@@ -37,7 +37,8 @@ public class UserSessionRepository {
     if (sessionKey == null) {
       return Optional.empty();
     }
-    return Optional.of(userSessionStore.entrySet().stream()
+    return Optional.of(userSessionStore.entrySet()
+                           .parallelStream()
                            .filter(s -> sessionKey.equalsIgnoreCase(s.getValue().getSessionKey()))
                            .findFirst().orElseThrow(IllegalStateException::new).getValue());
   }
@@ -45,8 +46,10 @@ public class UserSessionRepository {
 
   public Optional<User> findUserBySessionKey(String sessionKey) {
 
-    Optional<Map.Entry<User, UserSession>> userIdFound = userSessionStore.entrySet().stream()
-        .filter(s -> s.getValue().getSessionKey().equalsIgnoreCase(sessionKey)).findFirst();
+    Optional<Map.Entry<User, UserSession>> userIdFound = userSessionStore.entrySet()
+        .parallelStream()
+        .filter(s -> s.getValue().getSessionKey().equalsIgnoreCase(sessionKey))
+        .findFirst();
 
     if (userIdFound.isPresent()) {
       return Optional.of(userIdFound.get().getKey());
