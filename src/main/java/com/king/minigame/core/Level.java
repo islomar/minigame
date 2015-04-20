@@ -47,7 +47,10 @@ public class Level {
   private void validateParameters(Integer levelId) {
 
     if (levelId == null) {
-      throw new IllegalArgumentException("levelId can not be null");
+      throw new IllegalArgumentException("level id can not be null");
+    }
+    if (levelId < 0) {
+      throw new IllegalArgumentException("The level id should be a positive number");
     }
   }
 

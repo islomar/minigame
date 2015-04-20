@@ -28,8 +28,11 @@ public final class Score implements Comparable{
 
   private void validateParameters(Integer scoreValue, Instant creationTime) {
 
-    if (scoreValue == null || creationTime == null) {
+    if (scoreValue == null || scoreValue < 0 || creationTime == null) {
       throw new IllegalArgumentException("null values are not allowed");
+    }
+    if (scoreValue < 0) {
+      throw new IllegalArgumentException("The score should be a positive number");
     }
   }
 

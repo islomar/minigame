@@ -33,4 +33,9 @@ public class ScoreTest {
   public void when_creating_new_score_throw_IllegalArgumentException_if_both_values_are_null() {
     new Score(null, null);
   }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void when_creating_new_score_throw_IllegalArgumentException_if_scoreValue_is_negative() {
+    new Score(-1, Instant.now());
+  }
 }

@@ -46,4 +46,10 @@ public class LevelTest {
     Level level = new Level(null);
   }
 
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void throw_IllegalArgumentException_if_levelId_is_negative() {
+
+    Level level = new Level(-1);
+  }
+
 }
