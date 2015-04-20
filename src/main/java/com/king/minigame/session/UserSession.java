@@ -5,12 +5,12 @@ import java.time.Instant;
 /**
  *  Immutable class to store session cookies.
  */
-public final class SessionCookie {
+public final class UserSession {
 
   private final String sessionKey;
   private Instant creationInstant;
 
-  public SessionCookie(final String sessionKey, final Instant creationInstant) {
+  public UserSession(final String sessionKey, final Instant creationInstant) {
 
     validateParameters(sessionKey, creationInstant);
     this.sessionKey = sessionKey;

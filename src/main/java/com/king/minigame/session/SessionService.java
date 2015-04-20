@@ -1,5 +1,7 @@
 package com.king.minigame.session;
 
+import com.king.minigame.core.User;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -12,13 +14,15 @@ import java.util.UUID;
 public class SessionService {
 
   private final static int SESSION_TIMEOUT_IN_MINUTES = 10;
-  private SessionCookieRepository sessionCookieRepository;
+  private UserSessionRepository userSessionRepository;
+  private UserRepository userRepository;
 
   private Clock clock;
 
-  public SessionService(final Clock clock, SessionCookieRepository sessionCookieRepository) {
+  public SessionService(final Clock clock, UserSessionRepository userSessionRepository, UserRepository userRepository) {
 
-    this.sessionCookieRepository = sessionCookieRepository;
+    this.userSessionRepository = userSessionRepository;
+    this.userRepository = userRepository;
     this.clock = clock;
   }
 
@@ -29,63 +33,81 @@ public class SessionService {
     if (activeSessionKeyForUser.isPresent()) {
       return activeSessionKeyForUser.get();
     } else {
-      SessionCookie newSessionCookie = createSessionCookie();
-      saveSessionCookie(userId, newSessionCookie);
-      return newSessionCookie.getSessionKey();
+      createUserIfDoesNotExist(userId);
+      UserSession newUserSession = createUserSession();
+      saveUserSession(userId, newUserSession);
+      return newUserSession.getSessionKey();
     }
   }
 
   public boolean isSessionKeyValid(String sessionKey) {
 
-    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.findSessionCookieFromSessionKey(sessionKey);
+    Optional<UserSession> sessionCookie = this.userSessionRepository.findSessionCookieFromSessionKey(sessionKey);
     return sessionCookie.isPresent();
   }
 
   public boolean hasUserValidSessionKey(Integer userId) {
 
-    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.findSessionCookieForUser(userId);
-    return sessionCookie.isPresent() && isSessionCookieStillActive(sessionCookie.get());
+    Optional<UserSession> sessionCookie = this.userSessionRepository.findUserSessionByUserId(userId);
+    return sessionCookie.isPresent() && isUserSessionStillActive(sessionCookie.get());
   }
 
   public Optional<Integer> getUserIdForSessionKey(String sessionKey) {
-    return this.sessionCookieRepository.findUserIdFromSessionKey(sessionKey);
+    return this.userSessionRepository.findUserIdFromSessionKey(sessionKey);
   }
 
 
   public void removeAllSessions() {
 
-    this.sessionCookieRepository.removeAllSessions();
+    this.userSessionRepository.removeAllSessions();
+  }
+
+  private void saveUserSession(Integer userId, UserSession userSession) {
+
+    Optional<User> user = this.userRepository.findUserById(userId);
+    if (user.isPresent()) {
+      this.userSessionRepository.saveUserSession(user.get(), userSession);
+    }
+  }
+
+  private void createUserIfDoesNotExist(Integer userId) {
+
+    this.userRepository.createUser(userId);
   }
 
 
-  private void saveSessionCookie(Integer userId, SessionCookie sessionCookie) {
-
-    this.sessionCookieRepository.saveSessionCookie(userId, sessionCookie);
-  }
-
-
-  private SessionCookie createSessionCookie() {
+  private UserSession createUserSession() {
 
     String sessionKey = UUID.randomUUID().toString();
-    return new SessionCookie(sessionKey, clock.instant());
+    return new UserSession(sessionKey, clock.instant());
   }
 
+
+//  private Optional<String> getActiveSessionKeyForUser(Integer userId) {
+//
+//    Optional<UserSession> sessionCookie = this.userSessionRepository.findUserSessionByUserId(userId);
+//    if (sessionCookie.isPresent() && isUserSessionStillActive(sessionCookie.get())) {
+//      return Optional.of(sessionCookie.get().getSessionKey());
+//    } else {
+//      return Optional.empty();
+//    }
+//  }
 
   private Optional<String> getActiveSessionKeyForUser(Integer userId) {
 
-    Optional<SessionCookie> sessionCookie = this.sessionCookieRepository.findSessionCookieForUser(userId);
-    if (sessionCookie.isPresent() && isSessionCookieStillActive(sessionCookie.get())) {
-      return Optional.of(sessionCookie.get().getSessionKey());
+    Optional<UserSession> userSession = this.userSessionRepository.findUserSessionByUserId(userId);
+    if (userSession.isPresent() && isUserSessionStillActive(userSession.get())) {
+      return Optional.of(userSession.get().getSessionKey());
     } else {
       return Optional.empty();
     }
   }
 
 
-  private boolean isSessionCookieStillActive(SessionCookie sessionCookie) {
+  private boolean isUserSessionStillActive(UserSession userSession) {
 
     Instant sessionTimeout = Instant.now().minus(SESSION_TIMEOUT_IN_MINUTES, ChronoUnit.MINUTES);
-    return sessionCookie.getCreationInstant().isAfter(sessionTimeout);
+    return userSession.getCreationInstant().isAfter(sessionTimeout);
   }
 
 }

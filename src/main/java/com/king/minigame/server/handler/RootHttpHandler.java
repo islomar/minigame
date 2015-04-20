@@ -3,7 +3,8 @@ package com.king.minigame.server.handler;
 import com.king.minigame.controller.GameLevelController;
 import com.king.minigame.server.HttpRequestMethod;
 import com.king.minigame.server.Response;
-import com.king.minigame.session.SessionCookieRepository;
+import com.king.minigame.session.UserRepository;
+import com.king.minigame.session.UserSessionRepository;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -33,10 +34,11 @@ public class RootHttpHandler implements HttpHandler {
 
 
   public RootHttpHandler() {
-    SessionCookieRepository sessionCookieRepository = new SessionCookieRepository();
+    UserSessionRepository userSessionRepository = new UserSessionRepository();
+    UserRepository userRepository = new UserRepository();
 
-    this.gameLevelController = new GameLevelController(sessionCookieRepository);
-    this.loginRequestHandler = new LoginRequestHandler(sessionCookieRepository);
+    this.gameLevelController = new GameLevelController(userSessionRepository, userRepository);
+    this.loginRequestHandler = new LoginRequestHandler(userSessionRepository, userRepository);
     this.highScoreListRequestHandler = new HighScoreListRequestHandler(gameLevelController);
     this.postUserScoreToLevelRequestHandler = new PostUserScoreToLevelRequestHandler(gameLevelController);
   }

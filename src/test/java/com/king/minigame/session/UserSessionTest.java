@@ -10,7 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 @Test
-public class SessionCookieTest {
+public class UserSessionTest {
 
   public void a_session_cookie_returns_the_values_stored() {
     //GIVEN
@@ -18,11 +18,11 @@ public class SessionCookieTest {
     Instant creationInstant = Instant.now();
 
     //WHEN
-    SessionCookie sessionCookie = new SessionCookie(sessionKey, creationInstant);
+    UserSession userSession = new UserSession(sessionKey, creationInstant);
 
     //THEN
-    assertThat(sessionCookie.getSessionKey(), is(sessionKey));
-    assertThat(sessionCookie.getCreationInstant(), is(creationInstant));
+    assertThat(userSession.getSessionKey(), is(sessionKey));
+    assertThat(userSession.getCreationInstant(), is(creationInstant));
   }
 
   public void a_session_cookie_should_be_immutable() {
@@ -31,35 +31,35 @@ public class SessionCookieTest {
     Instant creationInstant = Instant.now();
 
     //WHEN
-    SessionCookie sessionCookie = new SessionCookie(sessionKey, creationInstant);
+    UserSession userSession = new UserSession(sessionKey, creationInstant);
 
-    String recoveredSessionKey = sessionCookie.getSessionKey();
+    String recoveredSessionKey = userSession.getSessionKey();
     recoveredSessionKey = "dummyValue";
 
-    Instant recoveredCreationInstant = sessionCookie.getCreationInstant();
+    Instant recoveredCreationInstant = userSession.getCreationInstant();
     recoveredCreationInstant = Instant.MIN;
 
     //THEN
-    assertThat(sessionCookie.getSessionKey(), is(sessionKey));
-    assertThat(sessionCookie.getCreationInstant(), is(creationInstant));
+    assertThat(userSession.getSessionKey(), is(sessionKey));
+    assertThat(userSession.getCreationInstant(), is(creationInstant));
   }
 
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void throw_IllegalArgumentException_if_session_key_is_null() {
-    new SessionCookie(null, Instant.now());
+    new UserSession(null, Instant.now());
   }
 
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void throw_IllegalArgumentException_if_instant_is_null() {
-    new SessionCookie("anySessionKey", null);
+    new UserSession("anySessionKey", null);
   }
 
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void throw_IllegalArgumentException_if_instant_is_in_the_future() {
-    new SessionCookie("anySessionKey", Instant.now().plus(1, ChronoUnit.MINUTES));
+    new UserSession("anySessionKey", Instant.now().plus(1, ChronoUnit.MINUTES));
   }
 
 

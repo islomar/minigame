@@ -2,7 +2,8 @@ package com.king.minigame.server.handler;
 
 import com.king.minigame.controller.LoginController;
 import com.king.minigame.server.Response;
-import com.king.minigame.session.SessionCookieRepository;
+import com.king.minigame.session.UserRepository;
+import com.king.minigame.session.UserSessionRepository;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -21,8 +22,8 @@ public class LoginRequestHandler {
   private static final Pattern LOGIN_PATTERN = Pattern.compile("/(\\d*?)/login");
   private final LoginController loginController;
 
-  public LoginRequestHandler(SessionCookieRepository sessionCookieRepository) {
-    this.loginController = new LoginController(sessionCookieRepository);
+  public LoginRequestHandler(UserSessionRepository userSessionRepository, UserRepository userRepository) {
+    this.loginController = new LoginController(userSessionRepository, userRepository);
   }
 
   public Optional<Response> handleLoginRequestIfApplies(URI uri) throws IOException {
