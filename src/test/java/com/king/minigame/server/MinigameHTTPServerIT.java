@@ -13,6 +13,8 @@ import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.testng.Assert.assertTrue;
 
 @Test
 public class MinigameHTTPServerIT {
@@ -24,8 +26,7 @@ public class MinigameHTTPServerIT {
     minigameHTTPServer = new MinigameHTTPServer();
   }
 
-  //TODO
-  @Test(enabled = false)
+
   public void start_server_send_requests_and_stop_server() throws IOException {
     minigameHTTPServer.startUp();
 
@@ -35,40 +36,42 @@ public class MinigameHTTPServerIT {
     conn.connect();
 
     int httpStatusCodeInResponse = conn.getResponseCode();
+    String returnedMessage = readMessageTextReturned(conn);
     assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
-    //URLConnection conn = url.openConnection();
-    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-   // assertEquals("<?xml version=\"1.0\"?>", in.readLine());
-//    assertEquals("<resource id=\"1234\" name=\"test\" />", in.lines().toString());
+    assertThat(returnedMessage, is(""));
 
     URL url2 = new URL("http://localhost:8081/111/login");
     HttpURLConnection conn2 = (HttpURLConnection)url2.openConnection();
     conn2.setRequestMethod("GET");
     conn2.connect();
-
     int httpStatusCodeInResponse2 = conn2.getResponseCode();
-    //assertThat(httpStatusCodeInResponse2, is(HttpURLConnection.HTTP_OK));
+    String sessionKey = readMessageTextReturned(conn2);
+    assertThat(httpStatusCodeInResponse2, is(HttpURLConnection.HTTP_OK));
+    assertThat(sessionKey, is(notNullValue()));
 
-    BufferedReader in2 = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    //BufferedReader in3 = new BufferedReader((PlainTextInputStream)(conn.getContent()));
-    //assertThat(conn2.getContent(), is("hola"));
 
-    System.out.println(in2.readLine());
-    //System.out.println(in3.readLine());
-
-    PlainTextInputStream in3 = (PlainTextInputStream)conn.getContent();
-    //Iterate over the InputStream and print it out.
-    int c;
-    while ((c = in3.read()) != -1) {
-      System.out.print((char) c);
-    }
-
-    String inputLine;
-    while ((inputLine = in.readLine()) != null)
-      System.out.println(inputLine);
-    in.close();
+    URL url3 = new URL("http://localhost:8081/1a1/login");
+    HttpURLConnection conn3 = (HttpURLConnection)url3.openConnection();
+    conn3.setRequestMethod("GET");
+    conn3.connect();
+    int httpStatusCodeInResponse3 = conn3.getResponseCode();
+    assertThat(httpStatusCodeInResponse3, is(HttpURLConnection.HTTP_NOT_FOUND));
 
     minigameHTTPServer.stop();
+  }
+
+  private String readMessageTextReturned(HttpURLConnection conn) throws IOException {
+
+    PlainTextInputStream content = (PlainTextInputStream) conn.getContent();
+    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content));
+
+    String inputLine;
+    StringBuilder messageReceived = new StringBuilder();
+    while ((inputLine = bufferedReader.readLine()) != null)
+      messageReceived.append(inputLine);
+    bufferedReader.close();
+
+    return messageReceived.toString();
   }
 
 }
