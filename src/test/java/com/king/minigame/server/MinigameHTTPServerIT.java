@@ -22,8 +22,10 @@ import static org.testng.Assert.fail;
 @Test
 public class MinigameHTTPServerIT {
 
-  public static final Integer USER_SCORE = 100;
-  private static final Integer USER_ID = 111;
+  public static final Integer USER_SCORE_100 = 100;
+  public static final Integer USER_SCORE_200 = 200;
+  private static final Integer USER_ID_1 = 1;
+  private static final Integer USER_ID_2 = 2;
   private MinigameHTTPServer minigameHTTPServer;
   private HttpURLConnection conn;
   private int httpStatusCodeInResponse;
@@ -39,11 +41,13 @@ public class MinigameHTTPServerIT {
 
     minigameHTTPServer.startUp();
 
-    String sessionKey = verifySuccessfulLogin();
+    String sessionKeyForUser1 = verifySuccessfulLoginForUser(USER_ID_1);
+    String sessionKeyForUser2 = verifySuccessfulLoginForUser(USER_ID_2);
 
     verifyLoginWithIncorrectUrl();
 
-    verifyPostUserScoreToLevel(sessionKey);
+    verifyPostUserScoreToLevel(sessionKeyForUser1, USER_SCORE_100);
+    verifyPostUserScoreToLevel(sessionKeyForUser2, USER_SCORE_200);
 
     verifyHighScoreList();
 
@@ -55,11 +59,11 @@ public class MinigameHTTPServerIT {
     httpStatusCodeInResponse = conn.getResponseCode();
     returnedMessage = readMessageTextReturned(conn);
     assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
-    assertThat(returnedMessage, is(String.format("%d=%d", USER_ID, USER_SCORE)));
+    assertThat(returnedMessage, is(String.format("%d=%d,%d=%d", USER_ID_2, USER_SCORE_200, USER_ID_1, USER_SCORE_100)));
   }
 
-  private void verifyPostUserScoreToLevel(String sessionKey) throws IOException {
-    conn = sendRequestWithBodyMessageTo("http://localhost:8081/123/score?sessionkey=" + sessionKey, "POST", String.valueOf(USER_SCORE));
+  private void verifyPostUserScoreToLevel(String sessionKey, Integer userScore) throws IOException {
+    conn = sendRequestWithBodyMessageTo("http://localhost:8081/123/score?sessionkey=" + sessionKey, "POST", String.valueOf(userScore));
     httpStatusCodeInResponse = conn.getResponseCode();
     returnedMessage = readMessageTextReturned(conn);
     assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
@@ -72,8 +76,8 @@ public class MinigameHTTPServerIT {
     assertThat(httpStatusCodeInResponse3, is(HttpURLConnection.HTTP_NOT_FOUND));
   }
 
-  private String verifySuccessfulLogin() throws IOException {
-    conn = sendRequestTo(String.format("http://localhost:8081/%d/login", USER_ID), "GET");
+  private String verifySuccessfulLoginForUser(Integer userId) throws IOException {
+    conn = sendRequestTo(String.format("http://localhost:8081/%d/login", userId), "GET");
     httpStatusCodeInResponse = conn.getResponseCode();
     String sessionKey = readMessageTextReturned(conn);
     assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
