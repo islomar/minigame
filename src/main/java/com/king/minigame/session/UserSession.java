@@ -8,7 +8,7 @@ import java.time.Instant;
 public final class UserSession {
 
   private final String sessionKey;
-  private Instant creationInstant;
+  private final Instant creationInstant;
 
   public UserSession(final String sessionKey, final Instant creationInstant) {
 
