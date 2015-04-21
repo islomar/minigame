@@ -2,7 +2,6 @@ package com.king.minigame.session;
 
 import com.king.minigame.core.model.User;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;

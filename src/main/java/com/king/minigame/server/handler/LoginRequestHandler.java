@@ -2,8 +2,6 @@ package com.king.minigame.server.handler;
 
 import com.king.minigame.controller.LoginController;
 import com.king.minigame.server.Response;
-import com.king.minigame.session.UserRepository;
-import com.king.minigame.session.UserSessionRepository;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
