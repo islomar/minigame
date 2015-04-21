@@ -46,12 +46,22 @@ public class MinigameHTTPServerIT {
 
     verifyLoginWithIncorrectUrl();
 
-    verifyPostUserScoreToLevel(sessionKeyForUser1, USER_SCORE_100);
-    verifyPostUserScoreToLevel(sessionKeyForUser2, USER_SCORE_200);
+    verifyPostUserScoreToLevelReturnsOKHttpStatus(sessionKeyForUser1, USER_SCORE_100);
+    verifyPostUserScoreToLevelReturnsOKHttpStatus(sessionKeyForUser2, USER_SCORE_200);
+
+    verifyPostUserScoreWithNonExistingSessionKeyToLevelReturnsForbiddenHttpStatus("non-existing-sessionkey", USER_SCORE_200);
+
+    verifyBadMethodResponse();
 
     verifyHighScoreList();
 
     minigameHTTPServer.stop();
+  }
+
+  private void verifyBadMethodResponse() throws IOException {
+    conn = sendRequestTo("http://localhost:8081/123/highscorelist", "PUT");
+    httpStatusCodeInResponse = conn.getResponseCode();
+    assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_BAD_METHOD));
   }
 
   private void verifyHighScoreList() throws IOException {
@@ -62,12 +72,18 @@ public class MinigameHTTPServerIT {
     assertThat(returnedMessage, is(String.format("%d=%d,%d=%d", USER_ID_2, USER_SCORE_200, USER_ID_1, USER_SCORE_100)));
   }
 
-  private void verifyPostUserScoreToLevel(String sessionKey, Integer userScore) throws IOException {
+  private void verifyPostUserScoreToLevelReturnsOKHttpStatus(String sessionKey, Integer userScore) throws IOException {
     conn = sendRequestWithBodyMessageTo("http://localhost:8081/123/score?sessionkey=" + sessionKey, "POST", String.valueOf(userScore));
     httpStatusCodeInResponse = conn.getResponseCode();
     returnedMessage = readMessageTextReturned(conn);
     assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
     assertThat(returnedMessage, is(""));
+  }
+
+  private void verifyPostUserScoreWithNonExistingSessionKeyToLevelReturnsForbiddenHttpStatus(String sessionKey, Integer userScore) throws IOException {
+    conn = sendRequestWithBodyMessageTo("http://localhost:8081/123/score?sessionkey=" + sessionKey, "POST", String.valueOf(userScore));
+    httpStatusCodeInResponse = conn.getResponseCode();
+    assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_FORBIDDEN));
   }
 
   private void verifyLoginWithIncorrectUrl() throws IOException {
