@@ -6,20 +6,28 @@ import org.testng.annotations.Test;
 import sun.net.www.content.text.PlainTextInputStream;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 @Test
 public class MinigameHTTPServerIT {
 
+  public static final Integer USER_SCORE = 100;
+  private static final Integer USER_ID = 111;
   private MinigameHTTPServer minigameHTTPServer;
+  private HttpURLConnection conn;
+  private int httpStatusCodeInResponse;
+  private String returnedMessage;
 
   @BeforeClass
   public void setUp() {
@@ -28,36 +36,88 @@ public class MinigameHTTPServerIT {
 
 
   public void start_server_send_requests_and_stop_server() throws IOException {
+
     minigameHTTPServer.startUp();
 
-    URL url = new URL("http://localhost:8081/123/highscorelist");
-    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-    conn.setRequestMethod("GET");
-    conn.connect();
+    String sessionKey = verifySuccessfulLogin();
 
-    int httpStatusCodeInResponse = conn.getResponseCode();
-    String returnedMessage = readMessageTextReturned(conn);
-    assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
-    assertThat(returnedMessage, is(""));
+    verifyLoginWithIncorrectUrl();
 
-    URL url2 = new URL("http://localhost:8081/111/login");
-    HttpURLConnection conn2 = (HttpURLConnection)url2.openConnection();
-    conn2.setRequestMethod("GET");
-    conn2.connect();
-    int httpStatusCodeInResponse2 = conn2.getResponseCode();
-    String sessionKey = readMessageTextReturned(conn2);
-    assertThat(httpStatusCodeInResponse2, is(HttpURLConnection.HTTP_OK));
-    assertThat(sessionKey, is(notNullValue()));
+    verifyPostUserScoreToLevel(sessionKey);
 
-
-    URL url3 = new URL("http://localhost:8081/1a1/login");
-    HttpURLConnection conn3 = (HttpURLConnection)url3.openConnection();
-    conn3.setRequestMethod("GET");
-    conn3.connect();
-    int httpStatusCodeInResponse3 = conn3.getResponseCode();
-    assertThat(httpStatusCodeInResponse3, is(HttpURLConnection.HTTP_NOT_FOUND));
+    verifyHighScoreList();
 
     minigameHTTPServer.stop();
+  }
+
+  private void verifyHighScoreList() throws IOException {
+    conn = sendRequestTo("http://localhost:8081/123/highscorelist", "GET");
+    httpStatusCodeInResponse = conn.getResponseCode();
+    returnedMessage = readMessageTextReturned(conn);
+    assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
+    assertThat(returnedMessage, is(String.format("%d=%d", USER_ID, USER_SCORE)));
+  }
+
+  private void verifyPostUserScoreToLevel(String sessionKey) throws IOException {
+    conn = sendRequestWithBodyMessageTo("http://localhost:8081/123/score?sessionkey=" + sessionKey, "POST", String.valueOf(USER_SCORE));
+    httpStatusCodeInResponse = conn.getResponseCode();
+    returnedMessage = readMessageTextReturned(conn);
+    assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
+    assertThat(returnedMessage, is(""));
+  }
+
+  private void verifyLoginWithIncorrectUrl() throws IOException {
+    conn = sendRequestTo("http://localhost:8081/1a1/login", "GET");
+    int httpStatusCodeInResponse3 = conn.getResponseCode();
+    assertThat(httpStatusCodeInResponse3, is(HttpURLConnection.HTTP_NOT_FOUND));
+  }
+
+  private String verifySuccessfulLogin() throws IOException {
+    conn = sendRequestTo(String.format("http://localhost:8081/%d/login", USER_ID), "GET");
+    httpStatusCodeInResponse = conn.getResponseCode();
+    String sessionKey = readMessageTextReturned(conn);
+    assertThat(httpStatusCodeInResponse, is(HttpURLConnection.HTTP_OK));
+    assertThatSessionKeyIsValidUuid(sessionKey);
+    return sessionKey;
+  }
+
+  private void assertThatSessionKeyIsValidUuid(String sessionKey) {
+    try {
+      assertThat(sessionKey, is(notNullValue()));
+      UUID uuid = UUID.fromString(sessionKey);
+    } catch (IllegalArgumentException ex) {
+      fail("The session key returned is not a valid UUID");
+    }
+  }
+
+  private HttpURLConnection sendRequestTo(String stringUrl, String requestMethod) throws IOException {
+    URL url = new URL(stringUrl);
+    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+    conn.setRequestMethod(requestMethod);
+    conn.connect();
+    return conn;
+  }
+
+  private HttpURLConnection sendRequestWithBodyMessageTo(String stringUrl, String requestMethod, String body) throws IOException {
+    URL url = new URL(stringUrl);
+    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+    conn.setRequestMethod(requestMethod);
+    if ("POST".equalsIgnoreCase(requestMethod)) {
+      conn.setRequestProperty("Content-Type", "text/plain");
+      conn.setRequestProperty("charset", "utf-8");
+      conn.setDoOutput( true );
+      conn.setDoInput ( true );
+      conn.setInstanceFollowRedirects( false );
+      byte[] postData       = body.getBytes( Charset.forName("UTF-8"));
+      int    postDataLength = postData.length;
+      conn.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
+      conn.setUseCaches( false );
+      try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
+        wr.write( postData );
+      }
+    }
+    conn.connect();
+    return conn;
   }
 
   private String readMessageTextReturned(HttpURLConnection conn) throws IOException {
