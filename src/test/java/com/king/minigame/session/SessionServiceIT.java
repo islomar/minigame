@@ -23,7 +23,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 @Test
-public class SessionServiceIntegrationTest {
+public class SessionServiceIT {
 
   private static final Integer USER_ID = 123456789;
 

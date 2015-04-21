@@ -89,9 +89,9 @@ public class RootHttpHandler implements HttpHandler {
 
     log(String.format("Response { statusCode: %d, message: '%s' }", response.get().getHttpStatusCode(), response.get().getResponseMessage()));
 
-    he.sendResponseHeaders(response.get().getHttpStatusCode(), response.get().getResponseMessage().length());
     Headers h = he.getResponseHeaders();
-    h.set("Content-Type", "text/plain");
+    h.add("Content-Type", "text/plain");
+    he.sendResponseHeaders(response.get().getHttpStatusCode(), response.get().getResponseMessage().length());
 
     writeOutputStream(he, response.get().getResponseMessage());
   }

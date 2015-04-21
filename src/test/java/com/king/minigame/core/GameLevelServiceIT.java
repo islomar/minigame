@@ -24,7 +24,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 @Test
-public class GameLevelServiceIntegrationTest {
+public class GameLevelServiceIT {
 
   private static final Integer USER_ID_1 = 1;
   private static final Integer USER_ID_2 = 2;
