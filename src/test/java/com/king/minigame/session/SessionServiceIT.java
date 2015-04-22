@@ -12,6 +12,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 @Test
 public class SessionServiceIT {
@@ -45,7 +47,7 @@ public class SessionServiceIT {
     setTimeToNow();
     String sessionKey = sessionService.login(USER_ID);
 
-    assertThat(sessionKey, is(notNullValue()));
+    assertThatSessionKeyIsValidUuid(sessionKey);
   }
 
 
@@ -106,6 +108,7 @@ public class SessionServiceIT {
     Optional<User> user = sessionService.findUserBySessionkey(sessionKey);
 
     assertTrue(user.isPresent());
+    assertThat(user.get().getUserId(), is(USER_ID));
   }
 
 
@@ -118,5 +121,14 @@ public class SessionServiceIT {
 
     Instant instantAgo = Instant.now().minus(minutesAgo, ChronoUnit.MINUTES);
     when(clockMock.instant()).thenReturn(instantAgo);
+  }
+
+  private void assertThatSessionKeyIsValidUuid(String sessionKey) {
+    try {
+      assertThat(sessionKey, is(notNullValue()));
+      UUID uuid = UUID.fromString(sessionKey);
+    } catch (IllegalArgumentException ex) {
+      fail("The session key returned is not a valid UUID");
+    }
   }
 }

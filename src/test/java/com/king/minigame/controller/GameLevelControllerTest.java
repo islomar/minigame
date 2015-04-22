@@ -46,7 +46,7 @@ public class GameLevelControllerTest {
     assertThat(highScoreListForLevel, is(""));
   }
 
-  public void calling_getHighScoreListForLevel_for_a_level_with_no_scores_returns_an_empty_string2() {
+  public void calling_getHighScoreListForLevel_for_a_level_with_scores_returns_a_csv_formatted_list() {
 
     //GIVEN
     String expectedHighScoreListInCsvFormat = "6=800,5=800,2=200,3=100";
