@@ -25,7 +25,7 @@ public class MinigameHTTPServer {
 
       this.httpThreadPool = Executors.newCachedThreadPool();
 
-      server.setExecutor(Executors.newCachedThreadPool());
+      server.setExecutor(this.httpThreadPool);
 
       log("Starting server in port " + PORT);
       server.start();
